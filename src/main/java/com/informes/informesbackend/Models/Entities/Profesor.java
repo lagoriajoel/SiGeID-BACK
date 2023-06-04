@@ -2,6 +2,7 @@ package com.informes.informesbackend.Models.Entities;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.informes.informesbackend.Security.Entity.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,11 +18,12 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+
 public class Profesor {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "profesor_id")
-    private Long id;
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @Column(name = "profesor_id")
+   private Long id;
     @NotNull
     private String dni;
     @NotBlank
@@ -31,7 +33,7 @@ public class Profesor {
     @NotBlank
     @Email
     private String email;
-    @JsonIgnore
+    //@JsonIgnore
     @ManyToMany
     @JoinTable(name = "profesores_asignaturas",
                     joinColumns = @JoinColumn(name = "profesor_id",
@@ -40,4 +42,7 @@ public class Profesor {
                     referencedColumnName = "asignatura_id"))
     private Set<Asignatura> asignaturas=new HashSet<>();
 
+  public String getNombreCompleto(){
+      return this.nombre+" "+this.apellido;
+  }
 }

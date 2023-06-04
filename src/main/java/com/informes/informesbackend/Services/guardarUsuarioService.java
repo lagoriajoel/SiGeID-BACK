@@ -27,7 +27,7 @@ public void crearUsuario(NuevoUsuario nuevoUsuario){
 
 
     Usuario usuario =
-            new Usuario(nuevoUsuario.getNombreUsuario(),
+            new Usuario(nuevoUsuario.getNombre(), nuevoUsuario.getNombreUsuario(),
                     passwordEncoder.encode(nuevoUsuario.getPassword()));
     Set<Rol> roles = new HashSet<>();
     roles.add(rolService.getByRolNombre(RolNombre.ROLE_USER).get());

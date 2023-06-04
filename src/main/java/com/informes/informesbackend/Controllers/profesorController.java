@@ -1,12 +1,14 @@
 package com.informes.informesbackend.Controllers;
 
 import com.informes.informesbackend.Models.Entities.Alumno;
+import com.informes.informesbackend.Models.Entities.Asignatura;
 import com.informes.informesbackend.Models.Entities.Curso;
 import com.informes.informesbackend.Models.Entities.Profesor;
 import com.informes.informesbackend.Security.DTO.NuevoUsuario;
 import com.informes.informesbackend.Security.Entity.Rol;
 import com.informes.informesbackend.Security.Entity.Usuario;
 import com.informes.informesbackend.Security.Service.UsuarioService;
+import com.informes.informesbackend.Services.AsignaturaService;
 import com.informes.informesbackend.Services.ProfesorService;
 import com.informes.informesbackend.Services.guardarUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ public class profesorController {
     private guardarUsuarioService guardarUsuarioService;
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private AsignaturaService asignaturaService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list")
@@ -60,6 +64,10 @@ public class profesorController {
             return validar(result);
         }
 
+        if(usuarioService.existsByNombreUsuario(profesor.getDni())){
+            return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El profesor ingresado ya tiene una cuenta creada"));
+        }
+
         Set<String> roles= new HashSet<>();
         roles.add("profesor");
 
@@ -71,9 +79,12 @@ public class profesorController {
         // crear el usuario para el alumno
 
         NuevoUsuario nuevoUsuario= new NuevoUsuario();
+        nuevoUsuario.setNombre(profesor.getNombreCompleto());
         nuevoUsuario.setNombreUsuario(profesor.getDni());
         nuevoUsuario.setPassword(profesor.getDni());
         nuevoUsuario.setRoles(roles);
+
+        //
 
         guardarUsuarioService.crearUsuario(nuevoUsuario);
 
@@ -104,7 +115,7 @@ public class profesorController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
 
-    public ResponseEntity<Alumno> eliminar(@PathVariable Long id){
+    public ResponseEntity<Profesor> eliminar(@PathVariable Long id){
         Optional<Profesor> profesorOptional = service.listarporId(id);
 
         if(!profesorOptional.isPresent()){
@@ -117,6 +128,37 @@ public class profesorController {
 
         service.eliminar(profesorOptional.get().getId());
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/asignar/{idProfesor}/Asignatura/{idAsignatura}")
+    public ResponseEntity<?> asignarAsignatura (@PathVariable Long idProfesor, @PathVariable Long idAsignatura){
+        Optional<Profesor> profesorOptional= service.listarporId(idProfesor);
+        if (!profesorOptional.isPresent()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Collections.singletonMap("Mensaje", "El profesor no se encuentra en la base de datos"));
+        }
+        Optional<Asignatura> asignaturaOptional= asignaturaService.listarporId(idAsignatura);
+
+        if (!asignaturaOptional.isPresent()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Collections.singletonMap("Mensaje", "La Asignatura no esta presente"));
+        }
+        if(profesorOptional.get().getAsignaturas().contains(asignaturaOptional.get())){
+            return ResponseEntity
+                    .badRequest()
+                    .body(Collections.singletonMap("Mensaje", "El profesor ya tiene asignado esta asignatura"));
+        }
+        Set<Asignatura> asignaturas=profesorOptional.get().getAsignaturas();
+
+        asignaturas.add(asignaturaOptional.get());
+
+        profesorOptional.get().setAsignaturas(asignaturas);
+
+       return ResponseEntity.ok().body( service.guardar(profesorOptional.get()));
+
+
     }
 
     private static ResponseEntity<Map<String, String>> validar(BindingResult result) {

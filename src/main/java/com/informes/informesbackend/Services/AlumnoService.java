@@ -18,4 +18,6 @@ public interface AlumnoService {
     List<Alumno> listarPorApellido(String apellido);
 
     List<Alumno>listarPorCurso(Long idCurso);
+
+    List<Alumno> guardarLista(List<Alumno> alumnos);
 }

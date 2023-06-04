@@ -9,11 +9,14 @@ import java.util.HashSet;
 import java.util.Set;
 @Entity
 @Data
-//@Inheritance(strategy = InheritanceType.JOINED)
+
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @NotNull
+    private String nombre;
 
     @NotNull
     @Column(unique = true)
@@ -29,14 +32,10 @@ public class Usuario {
     public Usuario() {
     }
 
+    public Usuario( @NotNull String nombre, @NotNull String nombreUsuario, @NotNull String password) {
 
-
-    public Usuario( @NotNull String nombreUsuario, @NotNull String password) {
-
-
-
+        this.nombre=nombre;
         this.nombreUsuario = nombreUsuario;
-
         this.password = password;
     }
 

@@ -60,7 +60,7 @@ public class AuthController {
             return new ResponseEntity(new Mensaje("ese nombre ya existe"), HttpStatus.BAD_REQUEST);
 
         Usuario usuario =
-                new Usuario(nuevoUsuario.getNombreUsuario(),
+                new Usuario(nuevoUsuario.getNombre(),nuevoUsuario.getNombreUsuario(),
                         passwordEncoder.encode(nuevoUsuario.getPassword()));
         Set<Rol> roles = new HashSet<>();
         roles.add(rolService.getByRolNombre(RolNombre.ROLE_USER).get());
@@ -79,7 +79,7 @@ public class AuthController {
             //return new ResponseEntity(new Mensaje("campos mal puestos"), HttpStatus.BAD_REQUEST);
             return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "Campos mal puestos"));
         Authentication authentication =
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUsuario.getNombreUsuario(), loginUsuario.getPassword()));
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken( loginUsuario.getNombreUsuario(), loginUsuario.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtProvider.generateToken(authentication);
 

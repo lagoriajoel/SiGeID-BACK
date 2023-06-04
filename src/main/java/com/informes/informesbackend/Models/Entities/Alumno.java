@@ -41,7 +41,6 @@ public class Alumno {
     private Set<InformeDesempeño> informeDesempenios=new HashSet<>();
 
 
-
     public String getNombreCompleto() {
 
         return this.apellido+" "+this.nombres;

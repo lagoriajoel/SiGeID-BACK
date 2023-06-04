@@ -1,6 +1,7 @@
 package com.informes.informesbackend.Models.Entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -19,7 +21,7 @@ import java.util.Set;
 @Entity
 @Table(name = "informes_desempenio")
 
-public class InformeDesempeño {
+public class InformeDesempeño implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "informe_id")
@@ -27,14 +29,20 @@ public class InformeDesempeño {
 
     private String descripcion;
 
+    private Long id_asignatura;
+
+    private Boolean created;
+
     @Column(name = "Fecha_Creacion", updatable = false, nullable = false)
     @Temporal(TemporalType.DATE)
     private Date Fecha;
-
+ /**
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name="curso_id", nullable=false)
     private Curso curso;
+  **/
+
 
 
     @ManyToOne(fetch = FetchType.LAZY)

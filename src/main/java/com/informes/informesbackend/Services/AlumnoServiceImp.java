@@ -54,4 +54,8 @@ public class AlumnoServiceImp implements AlumnoService{
     public List<Alumno> listarPorCurso(Long idCurso) {
          return (List<Alumno>)alumnoRepository.findBycurso(idCurso);
     }
+
+    public List<Alumno> guardarLista(List<Alumno> alumnos){
+        return alumnoRepository.saveAll(alumnos);
+    }
 }

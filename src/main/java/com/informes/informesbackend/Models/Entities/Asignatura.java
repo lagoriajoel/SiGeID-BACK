@@ -1,6 +1,7 @@
 package com.informes.informesbackend.Models.Entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,11 +27,15 @@ public class Asignatura {
     @NotNull
     private String anioCurso;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Curso curso;
+
 
     @OneToMany(mappedBy="asignatura", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonBackReference
     private Set<Contenido> contenidos=new HashSet<>();
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "profesores_asignaturas",
             joinColumns = @JoinColumn(name = "asignatura_id",

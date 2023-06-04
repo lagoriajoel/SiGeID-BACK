@@ -5,18 +5,24 @@ import com.informes.informesbackend.Security.DTO.NuevoUsuario;
 import com.informes.informesbackend.Security.Entity.Usuario;
 import com.informes.informesbackend.Security.Service.UsuarioService;
 import com.informes.informesbackend.Services.*;
+import com.univocity.parsers.common.record.Record;
+import com.univocity.parsers.csv.CsvParser;
+import com.univocity.parsers.csv.CsvParserSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -80,6 +86,7 @@ public class alumnoController {
     public ResponseEntity<?> listaPorCurso(@PathVariable Long id){
       return  ResponseEntity.ok(service.listarPorCurso(id));
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/save")
     public ResponseEntity<?> crearAlumno(@Valid @RequestBody Alumno alumno, BindingResult result) {
@@ -106,9 +113,12 @@ public class alumnoController {
 
         // crear el usuario para el alumno
 
+
         NuevoUsuario nuevoUsuario= new NuevoUsuario();
+        nuevoUsuario.setNombre(alumno.getNombreCompleto());
         nuevoUsuario.setNombreUsuario(alumno.getDni());
         nuevoUsuario.setPassword(alumno.getDni());
+
 
         guardarUsuarioService.crearUsuario(nuevoUsuario);
 
@@ -138,6 +148,8 @@ public class alumnoController {
 
 
     }
+
+
 
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -192,6 +204,8 @@ public class alumnoController {
     }
 
     //exportar pdf con jasper report
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/pdf/{informeId}/{dniAlumno}")
     public ResponseEntity<Resource> exportInvoice(@PathVariable Long informeId, @PathVariable String dniAlumno){
 
@@ -202,6 +216,39 @@ public class alumnoController {
         Set<Contenido> contenidosAdeudados=informe.get().getContenidosAdeudados();
 
         return this.jasperReportService.exportInvoice(alumno1, contenidosAdeudados);
+    }
+
+    @PostMapping("/uploadFile/{idCurso}")
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable Long idCurso) throws IOException {
+       Optional<Curso>optionalCurso=cursoService.porId(idCurso);
+        List<Alumno> alumnos = new ArrayList<>();
+       InputStream inputStream= file.getInputStream();
+        CsvParserSettings settings=new CsvParserSettings();
+        settings.setHeaderExtractionEnabled(true);
+        CsvParser parser= new CsvParser(settings);
+        List<Record> parseAllRecords = parser.parseAllRecords(inputStream);
+        parseAllRecords.forEach(record -> {
+            Alumno alumno=new Alumno();
+            alumno.setDni(record.getString("dni_alumno"));
+            alumno.setNombres(record.getString("nombres"));
+            alumno.setApellido(record.getString("apellidos"));
+            alumno.setEmail(record.getString("email"));
+            alumno.setCurso(optionalCurso.get());
+            alumnos.add(alumno);
+
+            NuevoUsuario nuevoUsuario= new NuevoUsuario();
+            nuevoUsuario.setNombre(alumno.getNombreCompleto());
+            nuevoUsuario.setNombreUsuario(alumno.getDni());
+            nuevoUsuario.setPassword(alumno.getDni());
+
+
+            guardarUsuarioService.crearUsuario(nuevoUsuario);
+
+        });
+
+
+
+         return ResponseEntity.ok().body( service.guardarLista(alumnos));
     }
 
 

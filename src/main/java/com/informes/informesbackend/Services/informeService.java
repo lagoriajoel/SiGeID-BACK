@@ -14,4 +14,8 @@ public interface informeService {
     InformeDesempeño guardar(InformeDesempeño informe);
     void eliminarInforme(Long id);
 
+    List<InformeDesempeño> listarPorAsignatura(Long idAsignatura);
+
+    Optional<InformeDesempeño> encontrarAlumno(Long alumno_id, Long id_asignatura);
+
 }

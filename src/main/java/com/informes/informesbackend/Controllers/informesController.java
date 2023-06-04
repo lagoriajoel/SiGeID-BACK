@@ -2,6 +2,7 @@ package com.informes.informesbackend.Controllers;
 
 import com.informes.informesbackend.Models.Entities.*;
 import com.informes.informesbackend.Models.Entities.EntitiesDTO.InformesDTO;
+import com.informes.informesbackend.Services.AlumnoService;
 import com.informes.informesbackend.Services.PDFgeneradorService;
 import com.informes.informesbackend.Services.informeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,8 @@ public class informesController {
 
     @Autowired
     private informeService service;
-
+    @Autowired
+    private AlumnoService alumnoService;
 
 
     @GetMapping("/list")
@@ -41,10 +43,26 @@ public class informesController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/listOfAsignatura/{idAsignatura}")
+    public ResponseEntity<?> listarPorAsignatura(@PathVariable Long idAsignatura){
+        List<InformeDesempeño> informeDesempeñoOptional = service.listarPorAsignatura(idAsignatura);
+        if (!informeDesempeñoOptional.isEmpty()){
+            return ResponseEntity.ok(informeDesempeñoOptional);
+        }
+        return ResponseEntity.notFound().build();
+    }
     @PostMapping("/save")
     public ResponseEntity<?> crearInforme(@Valid @RequestBody InformesDTO informe, BindingResult result){
 
+        System.out.println(informe.getAlumno().getId()+" id asignatura "+informe.getId_asignatura());
+       if (service.encontrarAlumno(informe.getAlumno().getId(), informe.getId_asignatura()).isPresent()) {
+           return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El Informe para este alumno ya existe"));
+       }
+
+
         //DateFormat formateador= new SimpleDateFormat("dd/M/yy");
+
 
 
 
@@ -56,12 +74,12 @@ public class informesController {
        InformeDesempeño nuevoInforme= new InformeDesempeño();
 
        nuevoInforme.setDescripcion(informe.getDescripcion());
+       nuevoInforme.setCreated(true);
        nuevoInforme.setAlumno(informe.getAlumno());
-       nuevoInforme.setCurso(informe.getCurso());
+       nuevoInforme.setId_asignatura(informe.getId_asignatura());
        nuevoInforme.setFecha((rightNow.getTime()));
+
        nuevoInforme.setContenidosAdeudados(informe.getContenidos());
-
-
 
 
         if(result.hasErrors()){
@@ -118,12 +136,7 @@ public class informesController {
         return ResponseEntity.badRequest().body(errores);
     }
 
-    private static boolean existInforme(InformesDTO informe){
 
-
-
-        return true;
-    }
 
 
 

@@ -10,14 +10,16 @@ import java.util.stream.Collectors;
 
 public class UsuarioPrincipal implements UserDetails {
 
+        private String nombre;
+
         private String nombreUsuario;
 
         private String password;
         private Collection<? extends GrantedAuthority> authorities;
 
-        public UsuarioPrincipal( String nombreUsuario, String password, Collection<? extends GrantedAuthority> authorities) {
+        public UsuarioPrincipal(String nombre, String nombreUsuario, String password, Collection<? extends GrantedAuthority> authorities) {
 
-
+            this.nombre=nombre;
             this.nombreUsuario = nombreUsuario;
             this.password = password;
             this.authorities = authorities;
@@ -27,7 +29,7 @@ public class UsuarioPrincipal implements UserDetails {
             List<GrantedAuthority> authorities =
                     usuario.getRoles().stream().map(rol -> new SimpleGrantedAuthority(rol
                             .getRolNombre().name())).collect(Collectors.toList());
-            return new UsuarioPrincipal(usuario.getNombreUsuario(), usuario.getPassword(), authorities);
+            return new UsuarioPrincipal(usuario.getNombre(), usuario.getNombreUsuario(), usuario.getPassword(), authorities);
         }
 
 
@@ -41,6 +43,11 @@ public class UsuarioPrincipal implements UserDetails {
         public String getPassword() {
             return password;
         }
+
+
+    public String getNombre() {
+        return nombre;
+    }
 
         @Override
         public String getUsername() {

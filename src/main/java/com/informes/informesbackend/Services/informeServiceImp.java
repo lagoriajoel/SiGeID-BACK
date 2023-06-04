@@ -2,6 +2,8 @@ package com.informes.informesbackend.Services;
 
 import com.informes.informesbackend.Models.Entities.Contenido;
 import com.informes.informesbackend.Models.Entities.InformeDesempeño;
+import com.informes.informesbackend.Repositories.AlumnoRepository;
+import com.informes.informesbackend.Repositories.AsignaturaRepository;
 import com.informes.informesbackend.Repositories.ContenidoRepository;
 import com.informes.informesbackend.Repositories.InformeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,11 @@ public class informeServiceImp implements informeService{
     private InformeRepository informeRepository;
     @Autowired
     private ContenidoRepository contenidoRepository;
+
+    @Autowired
+    private AlumnoRepository alumnoRepository;
+    @Autowired
+    private AsignaturaRepository asignaturaRepository;
 
     @Override
     public InformeDesempeño asignarContenidoAdeudado(Long id, Long contenidoId) {
@@ -51,6 +58,19 @@ public class informeServiceImp implements informeService{
        informeRepository.deleteById(id);
     }
 
+    @Override
+    public List<InformeDesempeño> listarPorAsignatura(Long id_asignatura) {
 
-    
+        return informeRepository.findByAsignatura(id_asignatura);
+    }
+
+
+    @Override
+    public Optional<InformeDesempeño> encontrarAlumno(Long alumno_id, Long id_asignatura) {
+        return informeRepository.FindByAlumno(alumno_id, id_asignatura);
+    }
+
+
+
+
 }
