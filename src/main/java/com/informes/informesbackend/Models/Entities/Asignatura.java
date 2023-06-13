@@ -2,6 +2,8 @@ package com.informes.informesbackend.Models.Entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +11,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,13 +38,19 @@ public class Asignatura {
     @JsonBackReference
     private Set<Contenido> contenidos=new HashSet<>();
 
-    @JsonIgnore
+    /**@JsonIgnore
     @ManyToMany
     @JoinTable(name = "profesores_asignaturas",
             joinColumns = @JoinColumn(name = "asignatura_id",
                     referencedColumnName = "asignatura_id"),
             inverseJoinColumns = @JoinColumn(name = "profesor_id",
                     referencedColumnName = "profesor_id"))
-    private Set<Profesor> profesores=new HashSet<>();
+    private Set<Profesor> profesores=new HashSet<>();**/
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    //genera problema multiple back reference
+    //@JsonBackReference
+    @JoinColumn(name="profesor_id")
+    private Profesor profesor;
 
 }

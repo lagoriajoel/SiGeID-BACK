@@ -31,4 +31,9 @@ public class AsignaturaServiceImp implements AsignaturaService{
     public void eliminar(Long id) {
         asignaturaRepository.deleteById(id);
     }
+
+    @Override
+    public List<Asignatura> listarPorProfesor(Long idProfesor) {
+        return asignaturaRepository.asignaturasByProfesor(idProfesor);
+    }
 }

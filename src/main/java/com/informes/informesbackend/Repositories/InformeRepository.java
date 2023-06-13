@@ -12,10 +12,10 @@ import java.util.Optional;
 
 public interface InformeRepository extends JpaRepository<InformeDesempeño, Long> {
 
-    @Query(value = "SELECT * FROM db_informes.informes_desempenio WHERE alumno_id=:alumno_id AND id_asignatura=:id_asignatura", nativeQuery=true)
+    @Query(value = "SELECT * FROM db_informes2.informes_desempenio WHERE alumno_id=:alumno_id AND id_asignatura=:id_asignatura", nativeQuery=true)
     Optional<InformeDesempeño> FindByAlumno(Long alumno_id, Long id_asignatura);
 
-    @Query(value = "SELECT * FROM db_informes.informes_desempenio WHERE id_asignatura=:idAsignatura", nativeQuery=true)
+    @Query(value = "SELECT * FROM db_informes2.informes_desempenio WHERE id_asignatura=:idAsignatura", nativeQuery=true)
     List<InformeDesempeño> findByAsignatura(Long idAsignatura);
 
 }

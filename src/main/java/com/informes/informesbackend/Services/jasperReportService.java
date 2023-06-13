@@ -41,9 +41,11 @@ public class jasperReportService {
                 parameters.put("anio", alumno1.getCurso().getAnio());
                 parameters.put("turno", alumno1.getCurso().getTurno());
 
+
                 parameters.put("division", alumno1.getCurso().getDivision());
                 parameters.put("cicloLectivo", alumno1.getCurso().getCicloLectivo());
                 parameters.put("asignatura", contenidosAdeudados.stream().findFirst().get().getAsignatura().getNombre());
+                parameters.put("profesor", contenidosAdeudados.stream().findFirst().get().getAsignatura().getProfesor().getNombreCompleto());
 
 
 

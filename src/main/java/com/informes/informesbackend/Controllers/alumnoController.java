@@ -63,7 +63,7 @@ public class alumnoController {
     public ResponseEntity<List<Alumno>> listar(){
       return ResponseEntity.ok(service.listar());
   }
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @GetMapping("/list/{id}")
     public ResponseEntity<?> detalle(@PathVariable Long id){
         Optional<Alumno> usuarioOptional= service.listarporId(id);
@@ -79,9 +79,11 @@ public class alumnoController {
         if (usuarioOptional.isPresent()){
             return ResponseEntity.ok(usuarioOptional.get());
         }
-        return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El DNI ingresado no pertenece a un Alumno"));
+        return ResponseEntity
+                .badRequest()
+                .body(Collections.singletonMap("Mensaje", "El DNI ingresado no pertenece a un Alumno"));
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @GetMapping("/listOfCurso/{id}")
     public ResponseEntity<?> listaPorCurso(@PathVariable Long id){
       return  ResponseEntity.ok(service.listarPorCurso(id));
@@ -91,10 +93,16 @@ public class alumnoController {
     @PostMapping("/save")
     public ResponseEntity<?> crearAlumno(@Valid @RequestBody Alumno alumno, BindingResult result) {
         if (!alumno.getEmail().isEmpty() && service.porEmail(alumno.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El email ingresado ya existe"));
+            return ResponseEntity
+                    .badRequest()
+                    .body(Collections
+                            .singletonMap("Mensaje", "El email ingresado ya existe"));
         }
         if (!alumno.getDni().isEmpty() && service.listarporDni(alumno.getDni()).isPresent()) {
-            return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El Alumno ingresado ya existe"));
+            return ResponseEntity
+                    .badRequest()
+                    .body(Collections
+                            .singletonMap("Mensaje", "El Alumno ingresado ya existe"));
         }
         if (result.hasErrors()) {
             return validar(result);
@@ -102,7 +110,10 @@ public class alumnoController {
         Optional<Curso> optionalCurso = cursoService.porId(alumno.getCurso().getIdCurso());
 
         if (!optionalCurso.isPresent()) {
-            return ResponseEntity.unprocessableEntity().build();
+            return ResponseEntity
+                    .badRequest()
+                    .body(Collections
+                            .singletonMap("Mensaje", "El Alumno no se encuetra asignado a un curso valido"));
         }
         alumno.setCurso(optionalCurso.get());
 

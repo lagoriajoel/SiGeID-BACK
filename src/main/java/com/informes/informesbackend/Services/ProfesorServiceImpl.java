@@ -47,4 +47,9 @@ public class ProfesorServiceImpl implements ProfesorService{
     public List<Profesor> listarPorApellido(String apellido) {
         return profesorRepository.findByApellido(apellido);
     }
+
+    @Override
+    public Optional<Long> encontrarPorAsignatura(Long idAsignatura) {
+        return profesorRepository.findProfesorByAsignatura(idAsignatura);
+    }
 }

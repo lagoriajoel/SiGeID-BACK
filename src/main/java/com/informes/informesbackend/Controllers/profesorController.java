@@ -41,14 +41,23 @@ public class profesorController {
     public ResponseEntity<List<Profesor>> listar(){
         return ResponseEntity.ok(service.listar());
     }
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @GetMapping("/list/{id}")
     public ResponseEntity<?> detalle(@PathVariable Long id){
         Optional<Profesor> usuarioOptional= service.listarporId(id);
         if (usuarioOptional.isPresent()){
             return ResponseEntity.ok(usuarioOptional.get());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El profesor ingresado NO existe"));
+    }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
+    @GetMapping("/listOfDni/{dni}")
+    public ResponseEntity<?> detalle(@PathVariable String dni){
+        Optional<Profesor> usuarioOptional= service.listarporDni(dni);
+        if (usuarioOptional.isPresent()){
+            return ResponseEntity.ok(usuarioOptional.get());
+        }
+        return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El profesor ingresado NO existe"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -129,26 +138,29 @@ public class profesorController {
         service.eliminar(profesorOptional.get().getId());
         return ResponseEntity.ok().build();
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/asignar/{idProfesor}/Asignatura/{idAsignatura}")
     public ResponseEntity<?> asignarAsignatura (@PathVariable Long idProfesor, @PathVariable Long idAsignatura){
         Optional<Profesor> profesorOptional= service.listarporId(idProfesor);
         if (!profesorOptional.isPresent()) {
             return ResponseEntity
                     .badRequest()
-                    .body(Collections.singletonMap("Mensaje", "El profesor no se encuentra en la base de datos"));
+                    .body(Collections
+                            .singletonMap("Mensaje", "El profesor no se encuentra en la base de datos"));
         }
         Optional<Asignatura> asignaturaOptional= asignaturaService.listarporId(idAsignatura);
 
         if (!asignaturaOptional.isPresent()) {
             return ResponseEntity
                     .badRequest()
-                    .body(Collections.singletonMap("Mensaje", "La Asignatura no esta presente"));
+                    .body(Collections
+                            .singletonMap("Mensaje", "La Asignatura no esta presente"));
         }
         if(profesorOptional.get().getAsignaturas().contains(asignaturaOptional.get())){
             return ResponseEntity
                     .badRequest()
-                    .body(Collections.singletonMap("Mensaje", "El profesor ya tiene asignado esta asignatura"));
+                    .body(Collections
+                            .singletonMap("Mensaje", "El profesor ya tiene asignado esta asignatura"));
         }
         Set<Asignatura> asignaturas=profesorOptional.get().getAsignaturas();
 
@@ -159,6 +171,19 @@ public class profesorController {
        return ResponseEntity.ok().body( service.guardar(profesorOptional.get()));
 
 
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/listarPorAsignatura/{idAsignatura}")
+    public ResponseEntity<?> listarPorAsignatura(@PathVariable Long idAsignatura) {
+        Optional<Long> idOpcioanl= (service.encontrarPorAsignatura(idAsignatura));
+        if (!idOpcioanl.isPresent()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Collections.singletonMap("Mensaje", "La asignatura no tiene asignado un profesor asignado" ));
+        }
+        Optional<Profesor> profesorOptional=service.listarporId(idOpcioanl.get());
+
+      return ResponseEntity.ok(profesorOptional);
     }
 
     private static ResponseEntity<Map<String, String>> validar(BindingResult result) {

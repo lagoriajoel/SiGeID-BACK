@@ -58,9 +58,13 @@ public class contenidosController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> eliminarContenido(@PathVariable long id){
+    public ResponseEntity<?> eliminarContenido(@PathVariable long id){
+        Optional<Contenido> contenidoOptional= service.listarporId(id);
+        if(!contenidoOptional.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
         service.eliminarContenido(id);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/listOfAsignatura/{idAsignatura}")
