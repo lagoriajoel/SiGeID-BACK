@@ -1,8 +1,7 @@
 package com.informes.informesbackend.Services;
 
 import com.informes.informesbackend.Models.Entities.Alumno;
-import com.informes.informesbackend.Models.Entities.Contenido;
-import com.informes.informesbackend.Models.Entities.InformeDesempeño;
+import com.informes.informesbackend.Models.Entities.InformeDesempenio;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
@@ -23,7 +22,7 @@ import java.util.*;
 @Service
 public class jasperReportService {
 
-    public ResponseEntity<Resource> exportInvoice(Optional<Alumno> alumno, Set<Contenido> contenidosAdeudados) {
+    public ResponseEntity<Resource> exportInvoice(Optional<Alumno> alumno, InformeDesempenio informeDesempenio) {
 
 
 
@@ -43,12 +42,12 @@ public class jasperReportService {
 
                 parameters.put("division", alumno1.getCurso().getDivision());
                 parameters.put("cicloLectivo", alumno1.getCurso().getCicloLectivo());
-                parameters.put("asignatura", contenidosAdeudados.stream().findFirst().get().getAsignatura().getNombre());
+                parameters.put("asignatura", informeDesempenio.getAsignatura());
 
 
 
                 parameters.put("logo", new FileInputStream(imgLogo));
-               parameters.put("ds", new JRBeanCollectionDataSource((Collection<?>) contenidosAdeudados));
+               parameters.put("ds", new JRBeanCollectionDataSource((Collection<?>) informeDesempenio.getContenidosAdeudados()));
 
                 JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
                 byte[] reporte = JasperExportManager.exportReportToPdf(jasperPrint);

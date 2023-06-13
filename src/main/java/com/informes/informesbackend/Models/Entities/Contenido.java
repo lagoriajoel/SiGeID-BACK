@@ -15,7 +15,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "contenidos")
+@Table(name = "contenido")
 public class Contenido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,21 +25,6 @@ public class Contenido {
     private String nombre;
 
     private String descripcion;
-
-
-     @JsonIgnore
-    @ManyToMany
-    //@JsonBackReference
-    @JoinTable(name = "contenidos_adeudados",
-            joinColumns = @JoinColumn(name = "contenido_id",
-                    referencedColumnName = "contenido_id"),
-            inverseJoinColumns = @JoinColumn(name = "informe_id",
-                    referencedColumnName = "informe_id"))
-    private Set<InformeDesempeño> Informes_desempeño = new HashSet<>();
-
-
-
-
 
     @ManyToOne
     //@JsonBackReference

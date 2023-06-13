@@ -1,5 +1,4 @@
 package com.informes.informesbackend.Controllers;
-
 import com.informes.informesbackend.Models.Entities.*;
 import com.informes.informesbackend.Security.DTO.NuevoUsuario;
 import com.informes.informesbackend.Security.Entity.Usuario;
@@ -11,21 +10,16 @@ import com.univocity.parsers.csv.CsvParserSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController()
@@ -39,8 +33,7 @@ public class alumnoController {
     @Autowired
     private informeService informeService;
 
-    @Autowired
-    private final PDFgeneradorService pdfGeneradorService;
+
     @Autowired
     private final  jasperReportService  jasperReportService;
 
@@ -50,9 +43,7 @@ public class alumnoController {
     @Autowired
     private UsuarioService usuarioService;
 
-    public alumnoController(PDFgeneradorService pdfGeneradorService, jasperReportService jasperReportService) {
-
-        this.pdfGeneradorService = pdfGeneradorService;
+    public alumnoController( jasperReportService jasperReportService) {
 
         this.jasperReportService= jasperReportService;
     }
@@ -172,7 +163,7 @@ public class alumnoController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 
     @GetMapping("/{id}/informes")
-    public ResponseEntity<Collection<InformeDesempeño>> listarInformesDeAlumno(@PathVariable Long id){
+    public ResponseEntity<Collection<InformeDesempenio>> listarInformesDeAlumno(@PathVariable Long id){
         Alumno alumno = service.listarporId(id).get();
 
         if(alumno != null) {
@@ -182,26 +173,7 @@ public class alumnoController {
         }
     }
 
-    @GetMapping("/pdf/generate/{informeId}/{dniAlumno}")
-    public void generatePDF(HttpServletResponse response, @PathVariable Long informeId, @PathVariable String dniAlumno) throws IOException {
 
-       Alumno alumno1=service.listarporDni(dniAlumno).get();
-
-       Optional<InformeDesempeño> informe= informeService.listarporId(informeId);
-       Set<Contenido> contenidosAdeudados=informe.get().getContenidosAdeudados();
-
-
-        response.setContentType("application/pdf");
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
-        String currentDateTime = dateFormatter.format(new Date());
-
-
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=pdf_" + currentDateTime + ".pdf";
-        response.setHeader(headerKey, headerValue);
-
-        this.pdfGeneradorService.export(response,  contenidosAdeudados, alumno1);
-    }
 
     //exportar pdf con jasper report
 
@@ -212,10 +184,11 @@ public class alumnoController {
 
         Optional<Alumno> alumno1=service.listarporDni(dniAlumno);
 
-        Optional<InformeDesempeño> informe= informeService.listarporId(informeId);
-        Set<Contenido> contenidosAdeudados=informe.get().getContenidosAdeudados();
+        Optional<InformeDesempenio> informe= informeService.listarporId(informeId);
+        Set<ContenidoAdeudado> contenidosAdeudados=informe.get().getContenidosAdeudados();
 
-        return this.jasperReportService.exportInvoice(alumno1, contenidosAdeudados);
+
+        return this.jasperReportService.exportInvoice(alumno1, informe.get());
     }
 
     @PostMapping("/uploadFile/{idCurso}")

@@ -3,7 +3,6 @@ package com.informes.informesbackend.Controllers;
 import com.informes.informesbackend.Models.Entities.*;
 import com.informes.informesbackend.Models.Entities.EntitiesDTO.InformesDTO;
 import com.informes.informesbackend.Services.AlumnoService;
-import com.informes.informesbackend.Services.PDFgeneradorService;
 import com.informes.informesbackend.Services.informeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,11 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController()
@@ -31,13 +26,13 @@ public class informesController {
 
     @GetMapping("/list")
     @CrossOrigin("*")
-    public ResponseEntity<List<InformeDesempeño>> listarInformes(){
-        return (ResponseEntity<List<InformeDesempeño>>) ResponseEntity.ok(service.listar());
+    public ResponseEntity<List<InformeDesempenio>> listarInformes(){
+        return (ResponseEntity<List<InformeDesempenio>>) ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/list/{id}")
     public ResponseEntity<?> detalle(@PathVariable Long id){
-        Optional<InformeDesempeño> informeDesempeñoOptional = service.listarporId(id);
+        Optional<InformeDesempenio> informeDesempeñoOptional = service.listarporId(id);
         if (informeDesempeñoOptional.isPresent()){
             return ResponseEntity.ok(informeDesempeñoOptional.get());
         }
@@ -46,54 +41,43 @@ public class informesController {
 
     @GetMapping("/listOfAsignatura/{idAsignatura}")
     public ResponseEntity<?> listarPorAsignatura(@PathVariable Long idAsignatura){
-        List<InformeDesempeño> informeDesempeñoOptional = service.listarPorAsignatura(idAsignatura);
-        if (!informeDesempeñoOptional.isEmpty()){
-            return ResponseEntity.ok(informeDesempeñoOptional);
+        List<InformeDesempenio> informeDesempenioOptional = service.listarPorAsignatura(idAsignatura);
+        if (!informeDesempenioOptional.isEmpty()){
+            return ResponseEntity.ok(informeDesempenioOptional);
         }
         return ResponseEntity.notFound().build();
     }
     @PostMapping("/save")
     public ResponseEntity<?> crearInforme(@Valid @RequestBody InformesDTO informe, BindingResult result){
 
-        System.out.println(informe.getAlumno().getId()+" id asignatura "+informe.getId_asignatura());
-       if (service.encontrarAlumno(informe.getAlumno().getId(), informe.getId_asignatura()).isPresent()) {
+       if (service.encontrarAlumno(informe.getAlumno().getId(), informe.getAsignatura().getAsignatura_id()).isPresent()) {
            return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El Informe para este alumno ya existe"));
        }
 
-
         //DateFormat formateador= new SimpleDateFormat("dd/M/yy");
-
-
-
 
         Calendar rightNow =  Calendar.getInstance();
 
         System.out.println((rightNow.getTime()));
 
+       InformeDesempenio nuevoInforme= new InformeDesempenio();
 
-       InformeDesempeño nuevoInforme= new InformeDesempeño();
-
-       nuevoInforme.setDescripcion(informe.getDescripcion());
-       nuevoInforme.setCreated(true);
        nuevoInforme.setAlumno(informe.getAlumno());
-       nuevoInforme.setId_asignatura(informe.getId_asignatura());
+       nuevoInforme.setAsignatura(informe.getAsignatura());
        nuevoInforme.setFecha((rightNow.getTime()));
-
-       nuevoInforme.setContenidosAdeudados(informe.getContenidos());
-
 
         if(result.hasErrors()){
             return validar(result);
         }
         System.out.println(nuevoInforme);
-        InformeDesempeño informeDB = service.guardar(nuevoInforme);
+        InformeDesempenio informeDB = service.guardar(nuevoInforme);
         return ResponseEntity.status(HttpStatus.CREATED).body(informeDB);
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<?> editarInforme(@RequestBody InformeDesempeño informe, @PathVariable Long id){
+    public ResponseEntity<?> editarInforme(@RequestBody InformeDesempenio informe, @PathVariable Long id){
 
-        Optional<InformeDesempeño> informeDesempeñoOptional = service.listarporId(id);
+        Optional<InformeDesempenio> informeDesempeñoOptional = service.listarporId(id);
         if (!informeDesempeñoOptional.isPresent()) {
             return ResponseEntity.unprocessableEntity().build();
         }
@@ -106,7 +90,7 @@ public class informesController {
     }
     @DeleteMapping("delete/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id){
-        Optional<InformeDesempeño> informeDesempeñoOptional = service.listarporId(id);
+        Optional<InformeDesempenio> informeDesempeñoOptional = service.listarporId(id);
 
 
         if(!informeDesempeñoOptional.isPresent()){
@@ -120,12 +104,12 @@ public class informesController {
 
 
 
-    @PutMapping("/list/{id}/contenido/{contenidoId}")
-    public InformeDesempeño asignarContenidoAdeudado(
+    @PutMapping("/asignarContenidos/{id}")
+    public InformeDesempenio asignarContenidoAdeudado(
             @PathVariable Long id,
-            @PathVariable Long contenidoId
+           @RequestBody Set<ContenidoAdeudado> contenidos
     ){
-        return  service.asignarContenidoAdeudado(id, contenidoId);
+        return  service.asignarContenidoAdeudado(id, contenidos);
     }
 
     private static ResponseEntity<Map<String, String>> validar(BindingResult result) {

@@ -1,9 +1,6 @@
 package com.informes.informesbackend.Models.Entities.EntitiesDTO;
 
-import com.informes.informesbackend.Models.Entities.Alumno;
-import com.informes.informesbackend.Models.Entities.Asignatura;
-import com.informes.informesbackend.Models.Entities.Contenido;
-import com.informes.informesbackend.Models.Entities.Curso;
+import com.informes.informesbackend.Models.Entities.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -15,10 +12,10 @@ public class InformesDTO {
 
     String anio;
     String descripcion;
-    Long id_asignatura;
-    //Curso curso;
+    Asignatura asignatura;
     Alumno alumno;
-    Set<Contenido> contenidos;
+    Set<ContenidoAdeudado> contenidosAdeudados;
+    String Profesor;
 
 
 }

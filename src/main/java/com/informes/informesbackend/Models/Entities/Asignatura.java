@@ -35,13 +35,10 @@ public class Asignatura {
     @JsonBackReference
     private Set<Contenido> contenidos=new HashSet<>();
 
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(name = "profesores_asignaturas",
-            joinColumns = @JoinColumn(name = "asignatura_id",
-                    referencedColumnName = "asignatura_id"),
-            inverseJoinColumns = @JoinColumn(name = "profesor_id",
-                    referencedColumnName = "profesor_id"))
-    private Set<Profesor> profesores=new HashSet<>();
+    @ManyToOne(fetch = FetchType.EAGER)
+    //genera problema multiple back reference
+    //@JsonBackReference
+    @JoinColumn(name="profesor_id")
+    private Profesor profesor;
 
 }

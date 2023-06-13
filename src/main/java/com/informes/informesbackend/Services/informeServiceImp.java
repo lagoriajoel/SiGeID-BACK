@@ -1,7 +1,7 @@
 package com.informes.informesbackend.Services;
 
-import com.informes.informesbackend.Models.Entities.Contenido;
-import com.informes.informesbackend.Models.Entities.InformeDesempeño;
+import com.informes.informesbackend.Models.Entities.ContenidoAdeudado;
+import com.informes.informesbackend.Models.Entities.InformeDesempenio;
 import com.informes.informesbackend.Repositories.AlumnoRepository;
 import com.informes.informesbackend.Repositories.AsignaturaRepository;
 import com.informes.informesbackend.Repositories.ContenidoRepository;
@@ -27,29 +27,28 @@ public class informeServiceImp implements informeService{
     private AsignaturaRepository asignaturaRepository;
 
     @Override
-    public InformeDesempeño asignarContenidoAdeudado(Long id, Long contenidoId) {
+    public InformeDesempenio asignarContenidoAdeudado(Long idInforme, Set<ContenidoAdeudado> contenidos) {
 
-        Set<Contenido> contenidoSet=null;
-        InformeDesempeño informeDesempeño= informeRepository.findById(id).get();
-        Contenido contenidoAdeudado= contenidoRepository.findById(contenidoId).get();
-       contenidoSet= informeDesempeño.getContenidosAdeudados();
-       contenidoSet.add(contenidoAdeudado);
-       informeDesempeño.setContenidosAdeudados(contenidoSet);
-      return informeRepository.save(informeDesempeño);
+        Set<ContenidoAdeudado> contenidoSet=null;
+        InformeDesempenio informeDesempenio = informeRepository.findById(idInforme).get();
+       contenidoSet= informeDesempenio.getContenidosAdeudados();
+       contenidoSet.addAll(contenidos);
+       informeDesempenio.setContenidosAdeudados(contenidos);
+      return informeRepository.save(informeDesempenio);
     }
 
     @Override
-    public List<InformeDesempeño> listar() {
+    public List<InformeDesempenio> listar() {
         return informeRepository.findAll();
     }
 
     @Override
-    public Optional<InformeDesempeño> listarporId(Long id) {
+    public Optional<InformeDesempenio> listarporId(Long id) {
         return informeRepository.findById(id);
     }
 
     @Override
-    public InformeDesempeño guardar(InformeDesempeño informe) {
+    public InformeDesempenio guardar(InformeDesempenio informe) {
         return informeRepository.save(informe);
     }
 
@@ -59,14 +58,14 @@ public class informeServiceImp implements informeService{
     }
 
     @Override
-    public List<InformeDesempeño> listarPorAsignatura(Long id_asignatura) {
+    public List<InformeDesempenio> listarPorAsignatura(Long id_asignatura) {
 
         return informeRepository.findByAsignatura(id_asignatura);
     }
 
 
     @Override
-    public Optional<InformeDesempeño> encontrarAlumno(Long alumno_id, Long id_asignatura) {
+    public Optional<InformeDesempenio> encontrarAlumno(Long alumno_id, Long id_asignatura) {
         return informeRepository.FindByAlumno(alumno_id, id_asignatura);
     }
 

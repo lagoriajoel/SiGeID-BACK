@@ -33,13 +33,10 @@ public class Profesor {
     @NotBlank
     @Email
     private String email;
-    //@JsonIgnore
-    @ManyToMany
-    @JoinTable(name = "profesores_asignaturas",
-                    joinColumns = @JoinColumn(name = "profesor_id",
-                    referencedColumnName = "profesor_id"),
-                    inverseJoinColumns = @JoinColumn(name = "asignatura_id",
-                    referencedColumnName = "asignatura_id"))
+
+    @OneToMany(mappedBy = "profesor",fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    /**al aplicar jsonIgnore se soluciona el error multi-back reference **/
+    @JsonIgnore
     private Set<Asignatura> asignaturas=new HashSet<>();
 
   public String getNombreCompleto(){

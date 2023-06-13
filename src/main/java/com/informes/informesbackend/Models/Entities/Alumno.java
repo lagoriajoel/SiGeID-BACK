@@ -1,9 +1,5 @@
 package com.informes.informesbackend.Models.Entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.informes.informesbackend.Security.Entity.Usuario;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,7 +34,7 @@ public class Alumno {
     private Curso curso;
 
     @OneToMany(mappedBy = "alumno", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<InformeDesempeño> informeDesempenios=new HashSet<>();
+    private Set<InformeDesempenio> informeDesempenios=new HashSet<>();
 
 
     public String getNombreCompleto() {

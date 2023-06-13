@@ -1,16 +1,12 @@
 package com.informes.informesbackend.Models.Entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,27 +17,24 @@ import java.util.Set;
 @Entity
 @Table(name = "informes_desempenio")
 
-public class InformeDesempeño implements Serializable {
+public class InformeDesempenio implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "informe_id")
     private Long id;
 
-    private String descripcion;
+    private String criterios_evaluacion;
 
-    private Long id_asignatura;
-
-    private Boolean created;
+    private String profesorNombre;
 
     @Column(name = "Fecha_Creacion", updatable = false, nullable = false)
     @Temporal(TemporalType.DATE)
     private Date Fecha;
- /**
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @JoinColumn(name="curso_id", nullable=false)
-    private Curso curso;
-  **/
+    @JoinColumn(name="asignatura_id", nullable=false)
+    private Asignatura asignatura;
 
 
 
@@ -52,13 +45,9 @@ public class InformeDesempeño implements Serializable {
 
 
 
-    @ManyToMany
-    @JoinTable(name = "contenidos_adeudados",
-            joinColumns = @JoinColumn(name = "informe_id",
-                    referencedColumnName = "informe_id"),
-            inverseJoinColumns = @JoinColumn(name = "contenido_id",
-                    referencedColumnName = "contenido_id"))
-    private Set<Contenido> contenidosAdeudados = new HashSet<>();
+
+    @OneToMany(mappedBy="informeDesempenio", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<ContenidoAdeudado> contenidosAdeudados = new HashSet<>();
 
 
 

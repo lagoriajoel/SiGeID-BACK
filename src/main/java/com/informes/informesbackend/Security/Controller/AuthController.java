@@ -89,6 +89,23 @@ public class AuthController {
 
 
     }
+    @PostMapping("/crearRoles/{crear}")
+    public ResponseEntity<?> crearRoles(@PathVariable int crear){
+
+        if(crear==1) {
+            Rol rolAdmin = new Rol(RolNombre.ROLE_ADMIN);
+            Rol rolUser = new Rol(RolNombre.ROLE_USER);
+            Rol rolProfesor = new Rol(RolNombre.ROLE_PROFESOR);
+
+            rolService.save(rolAdmin);
+            rolService.save(rolUser);
+            rolService.save(rolProfesor);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity
+                .badRequest()
+                .body(Collections.singletonMap("Mensaje", "No se pudo crear los Roles"));
+    }
 
     @PostMapping("/refresh")
     public ResponseEntity<JwtDto> refresh(@RequestBody JwtDto jwtDto) throws ParseException {
