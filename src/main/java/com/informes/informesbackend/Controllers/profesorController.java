@@ -50,6 +50,15 @@ public class profesorController {
         }
         return ResponseEntity.notFound().build();
     }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
+    @GetMapping("/listOfDni/{dni}")
+    public ResponseEntity<?> detalle(@PathVariable String dni){
+        Optional<Profesor> usuarioOptional= service.listarporDni(dni);
+        if (usuarioOptional.isPresent()){
+            return ResponseEntity.ok(usuarioOptional.get());
+        }
+        return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El profesor ingresado NO existe"));
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/save")
@@ -159,6 +168,19 @@ public class profesorController {
        return ResponseEntity.ok().body( service.guardar(profesorOptional.get()));
 
 
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/listarPorAsignatura/{idAsignatura}")
+    public ResponseEntity<?> listarPorAsignatura(@PathVariable Long idAsignatura) {
+        Optional<Long> idOpcioanl= (service.encontrarPorAsignatura(idAsignatura));
+        if (!idOpcioanl.isPresent()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Collections.singletonMap("Mensaje", "La asignatura no tiene asignado un profesor asignado" ));
+        }
+        Optional<Profesor> profesorOptional=service.listarporId(idOpcioanl.get());
+
+        return ResponseEntity.ok(profesorOptional);
     }
 
     private static ResponseEntity<Map<String, String>> validar(BindingResult result) {

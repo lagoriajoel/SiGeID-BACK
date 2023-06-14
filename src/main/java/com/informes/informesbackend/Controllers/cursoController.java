@@ -1,7 +1,9 @@
 package com.informes.informesbackend.Controllers;
 
 import com.informes.informesbackend.Models.Entities.Alumno;
+import com.informes.informesbackend.Models.Entities.Asignatura;
 import com.informes.informesbackend.Models.Entities.Curso;
+import com.informes.informesbackend.Services.AsignaturaService;
 import com.informes.informesbackend.Services.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,8 @@ public class cursoController {
 
     @Autowired
     private CursoService service;
+    @Autowired
+    private AsignaturaService asignaturaService;
 
     @GetMapping("/list")
     @CrossOrigin("*")
@@ -43,8 +47,39 @@ public class cursoController {
         if(result.hasErrors()){
             return validar(result);
         }
+
         Curso cursoDB = service.guardar(curso);
+        crearAsignaturas(cursoDB);
         return ResponseEntity.status(HttpStatus.CREATED).body(cursoDB);
+    }
+
+    private void crearAsignaturas(Curso curso) {
+       Set<String> asignaturas1año =new HashSet<>();
+        asignaturas1año.add("Biología");
+        asignaturas1año.add("Física");
+        asignaturas1año.add("Química");
+        asignaturas1año.add("Educación Física");
+        asignaturas1año.add("Tecnología");
+        asignaturas1año.add("Dibujo Técnico");
+        asignaturas1año.add("Lengua");
+        asignaturas1año.add("Matematica");
+        asignaturas1año.add("Geografía");
+        asignaturas1año.add("Lengua Extranjera");
+        asignaturas1año.add("Taller");
+
+        Set<Asignatura> asignaturasCreadas=new HashSet<>();
+
+        asignaturas1año.forEach( asignatura ->{
+            Asignatura asignaturaNueva=new Asignatura();
+            asignaturaNueva.setNombre(asignatura);
+            asignaturaNueva.setCurso(curso);
+            asignaturaNueva.setAnioCurso(curso.getAnio());
+            asignaturasCreadas.add(asignaturaNueva);
+        });
+
+        asignaturaService.GuardarAsignaturas(asignaturasCreadas);
+
+
     }
 
     @PutMapping("/update/{id}")

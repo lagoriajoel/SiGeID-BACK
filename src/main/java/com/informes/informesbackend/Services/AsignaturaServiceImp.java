@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 @Service
 public class AsignaturaServiceImp implements AsignaturaService{
 
@@ -30,5 +32,14 @@ public class AsignaturaServiceImp implements AsignaturaService{
     @Override
     public void eliminar(Long id) {
         asignaturaRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Asignatura> listarPorProfesor(Long idProfesor) {
+        return asignaturaRepository.asignaturasByProfesor(idProfesor);
+    }
+    public void GuardarAsignaturas(Set<Asignatura> asignaturas) {
+
+        asignaturaRepository.saveAll(asignaturas);
     }
 }

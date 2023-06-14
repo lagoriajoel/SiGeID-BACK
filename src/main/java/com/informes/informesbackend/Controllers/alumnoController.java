@@ -72,7 +72,7 @@ public class alumnoController {
         }
         return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El DNI ingresado no pertenece a un Alumno"));
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @GetMapping("/listOfCurso/{id}")
     public ResponseEntity<?> listaPorCurso(@PathVariable Long id){
       return  ResponseEntity.ok(service.listarPorCurso(id));

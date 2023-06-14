@@ -21,5 +21,5 @@ public interface ProfesorService {
 
     List<Profesor> listarPorApellido(String apellido);
 
-
+    Optional<Long> encontrarPorAsignatura (Long idAsignatura);
 }

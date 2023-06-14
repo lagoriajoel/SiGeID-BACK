@@ -14,7 +14,7 @@ public interface AlumnoRepository extends JpaRepository<Alumno, Long> {
 
     Optional<Alumno> findByEmail(String email);
 
-    @Query(value = "SELECT * FROM db_informes.alumnos as alumnos WHERE alumnos.curso=:idCurso", nativeQuery=true)
+    @Query(value = "SELECT * FROM db_informes_nuevo.alumnos as alumnos WHERE alumnos.curso=:idCurso", nativeQuery=true)
      List<Alumno> findBycurso(Long idCurso);
 
 

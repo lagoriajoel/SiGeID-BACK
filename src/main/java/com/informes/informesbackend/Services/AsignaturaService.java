@@ -4,6 +4,7 @@ import com.informes.informesbackend.Models.Entities.Asignatura;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface AsignaturaService {
 
@@ -14,6 +15,8 @@ public interface AsignaturaService {
     Asignatura guardar(Asignatura asignatura);
     void eliminar(Long id);
 
+    List<Asignatura> listarPorProfesor(Long idProfesor);
 
+    public void GuardarAsignaturas(Set<Asignatura> asignaturas);
 
 }
