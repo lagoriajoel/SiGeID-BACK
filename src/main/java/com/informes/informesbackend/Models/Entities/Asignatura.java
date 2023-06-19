@@ -34,6 +34,10 @@ public class Asignatura {
     @OneToMany(mappedBy="asignatura", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonBackReference
     private Set<Contenido> contenidos=new HashSet<>();
+//prueba para solucionar problema de asignatura sino aliminar "informe de desemepeño"
+    @OneToMany(mappedBy="asignatura", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<InformeDesempenio> informeDesempenios=new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     //genera problema multiple back reference
@@ -41,4 +45,6 @@ public class Asignatura {
     @JoinColumn(name="profesor_id")
     private Profesor profesor;
 
+    private String criteriosEvaluacion;
+    private String estrategiasEvaluacion;
 }

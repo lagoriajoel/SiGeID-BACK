@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 @Service
 public class ContenidoAdeudadoServiceImpl implements ContenidoAdeudadoService{
     @Autowired
@@ -19,6 +21,11 @@ public class ContenidoAdeudadoServiceImpl implements ContenidoAdeudadoService{
     @Override
     public List<ContenidoAdeudado> listarPorAsignatura(Long idAsignatura) {
         return null;
+    }
+
+    @Override
+    public List<ContenidoAdeudado> guardarTodos(Set<ContenidoAdeudado> contenidos) {
+        return  repository.saveAll(contenidos);
     }
 
     @Override

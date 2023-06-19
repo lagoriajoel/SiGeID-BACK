@@ -1,5 +1,6 @@
 package com.informes.informesbackend.Models.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ public class ContenidoAdeudado {
     private String nombre;
     private String descripcion;
     private boolean aprobado;
-
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Informe_id", nullable = false)
     private InformeDesempenio informeDesempenio;

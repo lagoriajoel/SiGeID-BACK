@@ -1,6 +1,7 @@
 package com.informes.informesbackend.Services;
 
 import com.informes.informesbackend.Models.Entities.Alumno;
+import com.informes.informesbackend.Models.Entities.ContenidoAdeudado;
 import com.informes.informesbackend.Models.Entities.InformeDesempenio;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -24,16 +25,18 @@ public class jasperReportService {
 
     public ResponseEntity<Resource> exportInvoice(Optional<Alumno> alumno, InformeDesempenio informeDesempenio) {
 
-
+        Set<ContenidoAdeudado> contenidosAdeudados= new HashSet<ContenidoAdeudado>(informeDesempenio.getContenidosAdeudados());
 
 
         if (alumno.isPresent())
             try {
-                final Alumno alumno1 = alumno.get();
-                final File file = ResourceUtils.getFile("classpath:reportPDF.jasper");
-                final File imgLogo = ResourceUtils.getFile("classpath:LOGO_EICO.png");
-                final JasperReport report = (JasperReport) JRLoader.loadObject(file);
+                //al crear el jar colocar el path: "target/classes/reportPDF1.jasper"
 
+
+                final Alumno alumno1 = alumno.get();
+                final File file = ResourceUtils.getFile("target/classes/reportPDF1.jasper");
+                final File imgLogo = ResourceUtils.getFile("target/classes/LOGO_EICO.png");
+                final JasperReport report = (JasperReport) JRLoader.loadObject(file);
                 final HashMap<String, Object> parameters = new HashMap<>();
                 parameters.put("nombre", alumno1.getNombreCompleto());
                 parameters.put("dni", alumno1.getDni());
@@ -42,12 +45,14 @@ public class jasperReportService {
 
                 parameters.put("division", alumno1.getCurso().getDivision());
                 parameters.put("cicloLectivo", alumno1.getCurso().getCicloLectivo());
-                parameters.put("asignatura", informeDesempenio.getAsignatura());
+                parameters.put("asignatura", informeDesempenio.getAsignatura().getNombre());
+                parameters.put("profesor", informeDesempenio.getProfesorNombre());
+
 
 
 
                 parameters.put("logo", new FileInputStream(imgLogo));
-               parameters.put("ds", new JRBeanCollectionDataSource((Collection<?>) informeDesempenio.getContenidosAdeudados()));
+               parameters.put("ds", new JRBeanCollectionDataSource((Collection<?>) contenidosAdeudados));
 
                 JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
                 byte[] reporte = JasperExportManager.exportReportToPdf(jasperPrint);

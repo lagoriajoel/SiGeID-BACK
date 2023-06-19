@@ -3,10 +3,12 @@ package com.informes.informesbackend.Controllers;
 import com.informes.informesbackend.Models.Entities.*;
 import com.informes.informesbackend.Models.Entities.EntitiesDTO.InformesDTO;
 import com.informes.informesbackend.Services.AlumnoService;
+import com.informes.informesbackend.Services.ContenidoAdeudadoService;
 import com.informes.informesbackend.Services.informeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +24,8 @@ public class informesController {
     private informeService service;
     @Autowired
     private AlumnoService alumnoService;
+    @Autowired
+    private ContenidoAdeudadoService contenidoAdeudadoService;
 
 
     @GetMapping("/list")
@@ -47,33 +51,72 @@ public class informesController {
         }
         return ResponseEntity.notFound().build();
     }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @PostMapping("/save")
     public ResponseEntity<?> crearInforme(@Valid @RequestBody InformesDTO informe, BindingResult result){
 
-       if (service.encontrarAlumno(informe.getAlumno().getId(), informe.getAsignatura().getAsignatura_id()).isPresent()) {
-           return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El Informe para este alumno ya existe"));
+     if (service.encontrarAlumno(informe.getAlumno().getId(), informe.getAsignatura().getAsignatura_id()).isPresent()) {
+         return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El Informe para este alumno ya existe"));
        }
-
-        //DateFormat formateador= new SimpleDateFormat("dd/M/yy");
-
+        System.out.println(informe);
         Calendar rightNow =  Calendar.getInstance();
+        InformeDesempenio nuevoInforme= new InformeDesempenio();
 
-        System.out.println((rightNow.getTime()));
+        nuevoInforme.setAlumno(informe.getAlumno());
+        nuevoInforme.setAsignatura(informe.getAsignatura());
+        nuevoInforme.setCriteriosEvaluacion(informe.getCriteriosEvaluacion());
+        nuevoInforme.setProfesorNombre(informe.getProfesorNombre());
+        nuevoInforme.setFecha((rightNow.getTime()));
+        System.out.println(nuevoInforme);
+        InformeDesempenio informeDB = service.guardar(nuevoInforme);
 
-       InformeDesempenio nuevoInforme= new InformeDesempenio();
+        Set<Contenido> contenidosInforme=informe.getContenidosAdeudados();
+        Set<ContenidoAdeudado> contenidoAdeudados=new HashSet<>();
+        contenidosInforme.forEach(contenido -> {
+            ContenidoAdeudado nuevoContenido=new ContenidoAdeudado();
+            nuevoContenido.setNombre(contenido.getNombre());
+            nuevoContenido.setDescripcion(contenido.getDescripcion());
+            nuevoContenido.setAprobado(false);
+            nuevoContenido.setInformeDesempenio(informeDB);
+            contenidoAdeudados.add(nuevoContenido);
+        });
+        List<ContenidoAdeudado> ListaContenidos= contenidoAdeudadoService.guardarTodos(contenidoAdeudados);
 
-       nuevoInforme.setAlumno(informe.getAlumno());
-       nuevoInforme.setAsignatura(informe.getAsignatura());
-       nuevoInforme.setFecha((rightNow.getTime()));
+        InformeDesempenio informeDesempenio=service.asignarContenidoAdeudado(informeDB.getId(), ListaContenidos);
 
         if(result.hasErrors()){
             return validar(result);
         }
-        System.out.println(nuevoInforme);
-        InformeDesempenio informeDB = service.guardar(nuevoInforme);
-        return ResponseEntity.status(HttpStatus.CREATED).body(informeDB);
-    }
 
+        return ResponseEntity.status(HttpStatus.CREATED).body(informeDesempenio);
+    }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
+    @PutMapping("agregarContenidos/{idInforme}")
+    public ResponseEntity<?> agregarContenidos(@RequestBody InformeDesempenio informe, @PathVariable Long idInforme){
+
+        Optional<InformeDesempenio> informeDesempeñoOptional = service.listarporId(idInforme);
+        if (!informeDesempeñoOptional.isPresent()) {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+
+        List<ContenidoAdeudado> contenidosInforme=informe.getContenidosAdeudados();
+        Set<ContenidoAdeudado> contenidoAdeudados=new HashSet<>();
+        contenidosInforme.forEach(contenido -> {
+            ContenidoAdeudado nuevoContenido=new ContenidoAdeudado();
+            nuevoContenido.setNombre(contenido.getNombre());
+            nuevoContenido.setDescripcion(contenido.getDescripcion());
+            nuevoContenido.setAprobado(false);
+            contenidoAdeudados.add(nuevoContenido);
+        });
+        List<ContenidoAdeudado> ListaContenidos= contenidoAdeudadoService.guardarTodos(contenidoAdeudados);
+
+
+        informe.setId(informeDesempeñoOptional.get().getId());
+        service.guardar(informe);
+
+        return ResponseEntity.noContent().build();
+    }
+    @PreAuthorize("hasRole('PROFESOR')")
     @PutMapping("update/{id}")
     public ResponseEntity<?> editarInforme(@RequestBody InformeDesempenio informe, @PathVariable Long id){
 
@@ -88,6 +131,7 @@ public class informesController {
 
         return ResponseEntity.noContent().build();
     }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @DeleteMapping("delete/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id){
         Optional<InformeDesempenio> informeDesempeñoOptional = service.listarporId(id);
@@ -102,14 +146,13 @@ public class informesController {
 
     }
 
-
-
-    @PutMapping("/asignarContenidos/{id}")
+    @PreAuthorize("hasRole('PROFESOR')")
+    @PutMapping("/asignarContenidos/{idInforme}")
     public InformeDesempenio asignarContenidoAdeudado(
-            @PathVariable Long id,
-           @RequestBody Set<ContenidoAdeudado> contenidos
+            @PathVariable Long idInforme,
+           @RequestBody List<ContenidoAdeudado> contenidos
     ){
-        return  service.asignarContenidoAdeudado(id, contenidos);
+        return  service.asignarContenidoAdeudado(idInforme, contenidos);
     }
 
     private static ResponseEntity<Map<String, String>> validar(BindingResult result) {

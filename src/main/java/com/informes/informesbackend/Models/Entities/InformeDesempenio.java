@@ -7,9 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -23,7 +21,7 @@ public class InformeDesempenio implements Serializable {
     @Column(name = "informe_id")
     private Long id;
 
-    private String criterios_evaluacion;
+    private String criteriosEvaluacion;
 
     private String profesorNombre;
 
@@ -31,8 +29,8 @@ public class InformeDesempenio implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date Fecha;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name="asignatura_id", nullable=false)
     private Asignatura asignatura;
 
@@ -47,7 +45,7 @@ public class InformeDesempenio implements Serializable {
 
 
     @OneToMany(mappedBy="informeDesempenio", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<ContenidoAdeudado> contenidosAdeudados = new HashSet<>();
+    private List<ContenidoAdeudado> contenidosAdeudados = new ArrayList<>();
 
 
 

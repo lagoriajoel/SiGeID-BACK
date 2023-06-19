@@ -138,7 +138,7 @@ public class profesorController {
         service.eliminar(profesorOptional.get().getId());
         return ResponseEntity.ok().build();
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/asignar/{idProfesor}/Asignatura/{idAsignatura}")
     public ResponseEntity<?> asignarAsignatura (@PathVariable Long idProfesor, @PathVariable Long idAsignatura){
         Optional<Profesor> profesorOptional= service.listarporId(idProfesor);

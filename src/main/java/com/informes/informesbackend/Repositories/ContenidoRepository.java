@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ContenidoRepository extends JpaRepository<Contenido, Long> {
 
-    @Query(value = "SELECT * FROM db_informes_nuevo.contenidos as informes where asignatura_id=:idAsignatura", nativeQuery=true)
+    @Query(value = "SELECT * FROM db_informes_nuevo.contenido as informes where asignatura_id=:idAsignatura", nativeQuery=true)
     List<Contenido> findByAsignatura(Long idAsignatura);
 }

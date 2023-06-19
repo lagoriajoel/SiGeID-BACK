@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,7 @@ public class cursoController {
         }
         return ResponseEntity.notFound().build();
     }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @PostMapping("/save")
     public ResponseEntity<?> crear(@Valid @RequestBody Curso curso, BindingResult result){
 
@@ -52,6 +54,7 @@ public class cursoController {
         crearAsignaturas(cursoDB);
         return ResponseEntity.status(HttpStatus.CREATED).body(cursoDB);
     }
+    @PreAuthorize("hasRole('ADMIN')")
 
     private void crearAsignaturas(Curso curso) {
        Set<String> asignaturas1año =new HashSet<>();
@@ -81,7 +84,7 @@ public class cursoController {
 
 
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{id}")
     public ResponseEntity<?> editarCurso(@RequestBody Curso curso, @PathVariable Long id){
 
@@ -96,6 +99,7 @@ public class cursoController {
         service.guardar(curso);
         return ResponseEntity.ok().build();
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     @CrossOrigin("*")
     public ResponseEntity<?> eliminar(@PathVariable Long id){

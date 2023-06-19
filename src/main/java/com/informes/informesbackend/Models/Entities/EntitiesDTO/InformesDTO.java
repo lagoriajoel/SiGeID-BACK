@@ -10,12 +10,12 @@ import java.util.Set;
 @AllArgsConstructor
 public class InformesDTO {
 
-    String anio;
-    String descripcion;
+    String criteriosEvaluacion;
+    String profesorNombre;
     Asignatura asignatura;
     Alumno alumno;
-    Set<ContenidoAdeudado> contenidosAdeudados;
-    String Profesor;
+    Set<Contenido> contenidosAdeudados;
+
 
 
 }

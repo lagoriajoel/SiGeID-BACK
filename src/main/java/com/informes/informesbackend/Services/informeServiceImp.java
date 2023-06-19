@@ -25,11 +25,11 @@ public class informeServiceImp implements informeService{
     private AlumnoRepository alumnoRepository;
     @Autowired
     private AsignaturaRepository asignaturaRepository;
-
+/** metodo que agrega los contenidos adeudado, recibe el id del informe y un conjunto de contenidos adeudados**/
     @Override
-    public InformeDesempenio asignarContenidoAdeudado(Long idInforme, Set<ContenidoAdeudado> contenidos) {
+    public InformeDesempenio asignarContenidoAdeudado(Long idInforme, List<ContenidoAdeudado> contenidos) {
 
-        Set<ContenidoAdeudado> contenidoSet=null;
+        List<ContenidoAdeudado> contenidoSet=null;
         InformeDesempenio informeDesempenio = informeRepository.findById(idInforme).get();
        contenidoSet= informeDesempenio.getContenidosAdeudados();
        contenidoSet.addAll(contenidos);

@@ -36,7 +36,7 @@ public class AdminController {
     public ResponseEntity<List<Administrador>> listar(){
         return ResponseEntity.ok(service.listar());
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list/{id}")
     public ResponseEntity<?> detalle(@PathVariable Long id){
         Optional<Administrador> usuarioOptional= service.listarporId(id);

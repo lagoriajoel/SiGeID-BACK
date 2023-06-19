@@ -161,7 +161,6 @@ public class alumnoController {
         return ResponseEntity.ok().build();
     }
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-
     @GetMapping("/{id}/informes")
     public ResponseEntity<Collection<InformeDesempenio>> listarInformesDeAlumno(@PathVariable Long id){
         Alumno alumno = service.listarporId(id).get();
@@ -185,12 +184,12 @@ public class alumnoController {
         Optional<Alumno> alumno1=service.listarporDni(dniAlumno);
 
         Optional<InformeDesempenio> informe= informeService.listarporId(informeId);
-        Set<ContenidoAdeudado> contenidosAdeudados=informe.get().getContenidosAdeudados();
+
 
 
         return this.jasperReportService.exportInvoice(alumno1, informe.get());
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/uploadFile/{idCurso}")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable Long idCurso) throws IOException {
        Optional<Curso>optionalCurso=cursoService.porId(idCurso);

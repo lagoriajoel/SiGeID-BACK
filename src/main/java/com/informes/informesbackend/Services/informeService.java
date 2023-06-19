@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface informeService {
-    InformeDesempenio asignarContenidoAdeudado(Long idInforme, Set<ContenidoAdeudado> contenidos);
+    InformeDesempenio asignarContenidoAdeudado(Long idInforme, List<ContenidoAdeudado> contenidos);
 
     List<InformeDesempenio> listar();
     Optional<InformeDesempenio> listarporId(Long id);

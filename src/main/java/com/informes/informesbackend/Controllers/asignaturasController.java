@@ -24,11 +24,12 @@ public class asignaturasController {
     private AsignaturaService asignaturaService;
     @Autowired
     private ProfesorService profesorService;
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @GetMapping("list")
     public ResponseEntity<Collection<Asignatura>> listarAsignaturas(){
         return new ResponseEntity<>(asignaturaService.listar(), HttpStatus.OK);
     }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
 
     @GetMapping("list/{id}")
     public ResponseEntity<Asignatura> obtenerAsignaturas(@PathVariable long id){
@@ -51,12 +52,13 @@ public class asignaturasController {
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
     }
+    @PreAuthorize("hasRole('ADMIN')")
 
     @PostMapping("save")
     public ResponseEntity<?> guardarAsignatura(@RequestBody Asignatura asignatura){
         return new ResponseEntity<>(asignaturaService.guardar(asignatura),HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> eliminarAsignatura(@PathVariable long id){
         asignaturaService.eliminar(id);
