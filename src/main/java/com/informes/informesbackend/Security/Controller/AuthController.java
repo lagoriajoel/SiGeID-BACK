@@ -1,10 +1,7 @@
 package com.informes.informesbackend.Security.Controller;
 
 
-import com.informes.informesbackend.Security.DTO.JwtDto;
-import com.informes.informesbackend.Security.DTO.LoginUsuario;
-import com.informes.informesbackend.Security.DTO.Mensaje;
-import com.informes.informesbackend.Security.DTO.NuevoUsuario;
+import com.informes.informesbackend.Security.DTO.*;
 import com.informes.informesbackend.Security.Entity.Rol;
 import com.informes.informesbackend.Security.Entity.Usuario;
 import com.informes.informesbackend.Security.Enums.RolNombre;
@@ -12,15 +9,12 @@ import com.informes.informesbackend.Security.JWT.JwtProvider;
 import com.informes.informesbackend.Security.Service.RolService;
 import com.informes.informesbackend.Security.Service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +24,7 @@ import javax.validation.Valid;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -76,10 +71,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginUsuario loginUsuario, BindingResult bindingResult)  {
         if(bindingResult.hasErrors())
-            //return new ResponseEntity(new Mensaje("campos mal puestos"), HttpStatus.BAD_REQUEST);
-            return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "Campos mal puestos"));
+                     return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "Campos mal puestos"));
         Authentication authentication =
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken( loginUsuario.getNombreUsuario(), loginUsuario.getPassword()));
+                authenticationManager
+                        .authenticate(
+                                new UsernamePasswordAuthenticationToken(
+                                        loginUsuario.getNombreUsuario(), loginUsuario.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtProvider.generateToken(authentication);
 
@@ -88,6 +85,22 @@ public class AuthController {
         return new ResponseEntity(jwtDto, HttpStatus.OK);
 
 
+    }
+
+    @PutMapping("/changePassword/{nombreUsuario}")
+    public ResponseEntity<?> cambiarContraenia(@PathVariable String nombreUsuario , @RequestBody changePassword changePassword){
+      Optional<Usuario> usuarioOptional= usuarioService.getByNombreUsuario(nombreUsuario);
+
+      boolean check = passwordEncoder.matches(changePassword.getCurrentPassword(), usuarioOptional.get().getPassword());
+
+        if (!check)
+            return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "La contraseña actual es incorrecta"));
+        if(!usuarioOptional.isPresent())
+            return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "Usuario no encontrado"));
+
+        usuarioOptional.get().setPassword(passwordEncoder.encode(changePassword.getNewPassword()));
+        usuarioService.save(usuarioOptional.get());
+        return ResponseEntity.ok().build();
     }
     @PostMapping("/crearRoles/{crear}")
     public ResponseEntity<?> crearRoles(@PathVariable int crear){

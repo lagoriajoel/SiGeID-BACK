@@ -15,7 +15,7 @@ public interface ProfesorRepository extends JpaRepository<Profesor, Long> {
 
     Optional<Profesor> findByEmail(String email);
 
-    @Query(value = "SELECT profesor_id FROM db_informes_nuevo.asignaturas where asignatura_id=:idAsignatura", nativeQuery=true)
+    @Query(value = "SELECT profesor_id FROM asignaturas where asignatura_id=:idAsignatura", nativeQuery=true)
     Optional<Long> findProfesorByAsignatura(Long idAsignatura);
 
 }

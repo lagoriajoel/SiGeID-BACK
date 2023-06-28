@@ -49,7 +49,7 @@ public class alumnoController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @GetMapping("/list")
     public ResponseEntity<List<Alumno>> listar(){
       return ResponseEntity.ok(service.listar());

@@ -27,7 +27,7 @@ public class informesController {
     @Autowired
     private ContenidoAdeudadoService contenidoAdeudadoService;
 
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @GetMapping("/list")
     @CrossOrigin("*")
     public ResponseEntity<List<InformeDesempenio>> listarInformes(){
@@ -50,6 +50,11 @@ public class informesController {
             return ResponseEntity.ok(informeDesempenioOptional);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/listOfNombreAsignatura/{nombre}/{curso}")
+    public ResponseEntity<?> listarPorNombreAsignatura(@PathVariable String nombre, @PathVariable String curso){
+       return ResponseEntity.ok(service.listarPorNombreAsignatura(nombre, curso));
     }
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @PostMapping("/save")

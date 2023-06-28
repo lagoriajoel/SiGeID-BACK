@@ -19,4 +19,6 @@ public interface informeService {
 
     Optional<InformeDesempenio> encontrarAlumno(Long alumno_id, Long id_asignatura);
 
+    List<InformeDesempenio> listarPorNombreAsignatura(String asignatura, String curso);
+
 }

@@ -69,7 +69,10 @@ public class informeServiceImp implements informeService{
         return informeRepository.FindByAlumno(alumno_id, id_asignatura);
     }
 
-
+    @Override
+    public List<InformeDesempenio> listarPorNombreAsignatura(String asignatura, String curso) {
+        return informeRepository.findByNombreOfAsignatura(asignatura, curso);
+    }
 
 
 }
