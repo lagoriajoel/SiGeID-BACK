@@ -35,7 +35,7 @@ public class jasperReportService {
 
                 final Alumno alumno1 = alumno.get();
                 final File file = ResourceUtils.getFile("classpath:reportPDF1.jasper");
-                final File imgLogo = ResourceUtils.getFile("classpath:LOGO_EICO.png");
+                final File imgLogo = ResourceUtils.getFile("classpath:logoCPE.png");
                 final JasperReport report = (JasperReport) JRLoader.loadObject(file);
                 final HashMap<String, Object> parameters = new HashMap<>();
                 parameters.put("nombre", alumno1.getNombreCompleto());
@@ -53,6 +53,8 @@ public class jasperReportService {
 
                 parameters.put("logo", new FileInputStream(imgLogo));
                parameters.put("ds", new JRBeanCollectionDataSource((Collection<?>) contenidosAdeudados));
+                parameters.put("ds_1", new JRBeanCollectionDataSource((Collection<?>) contenidosAdeudados));
+
 
                 JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
                 byte[] reporte = JasperExportManager.exportReportToPdf(jasperPrint);

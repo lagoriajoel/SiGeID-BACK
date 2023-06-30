@@ -22,8 +22,23 @@ public class InformeDesempenio implements Serializable {
     private Long id;
 
     private String criteriosEvaluacion;
+    private String estrategiasEvaluacion;
 
     private String profesorNombre;
+    @Temporal(TemporalType.DATE)
+    private Date fechaInstancia_1;
+    @Temporal(TemporalType.DATE)
+    private Date fechaInstancia_2;
+    @Temporal(TemporalType.DATE)
+    private Date fechaInstancia_3;
+    @Temporal(TemporalType.DATE)
+    private Date fechaInstancia_4;
+
+    private String presidenteMesaInstancia_1="";
+    private String presidenteMesaInstancia_2="";
+    private String presidenteMesaInstancia_3="";
+    private String presidenteMesaInstancia_4="";
+
 
     @Column(name = "Fecha_Creacion", updatable = false, nullable = false)
     @Temporal(TemporalType.DATE)

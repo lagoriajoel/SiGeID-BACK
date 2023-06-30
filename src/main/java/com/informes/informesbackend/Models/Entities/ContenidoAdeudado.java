@@ -27,4 +27,13 @@ public class ContenidoAdeudado {
     @JoinColumn(name = "Informe_id", nullable = false)
     private InformeDesempenio informeDesempenio;
 
+    private String instanciaEvaluacion_diciembre="";
+    private String instanciaEvaluacion_febrero="";
+    private String instanciaEvaluacion_1="";
+    private String instanciaEvaluacion_2="";
+    private String instanciaEvaluacion_3="";
+    private String instanciaEvaluacion_4="";
+
+
+
 }
