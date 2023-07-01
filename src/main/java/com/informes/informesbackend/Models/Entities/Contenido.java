@@ -19,8 +19,8 @@ import java.util.Set;
 public class Contenido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-     @Column(name = "contenido_id")
-     private Long id;
+    @Column(name = "contenido_id")
+    private Long id;
     @NotBlank
     private String nombre;
 

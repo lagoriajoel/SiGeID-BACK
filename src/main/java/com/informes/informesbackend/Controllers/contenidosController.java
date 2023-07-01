@@ -1,5 +1,6 @@
 package com.informes.informesbackend.Controllers;
 
+import com.informes.informesbackend.Models.Entities.Alumno;
 import com.informes.informesbackend.Models.Entities.Asignatura;
 import com.informes.informesbackend.Models.Entities.Contenido;
 import com.informes.informesbackend.Models.Entities.Curso;
@@ -29,7 +30,7 @@ public class contenidosController {
     }
 
     @GetMapping("list/{id}")
-    public ResponseEntity<Contenido> obtenerContenidoPorId(@PathVariable long id){
+    public ResponseEntity<Contenido> obtenerContenidoPorId(@PathVariable Long id){
         Contenido contenido = service.listarporId(id).get();
 
         if(contenido != null) {
@@ -60,9 +61,15 @@ public class contenidosController {
     }
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> eliminarContenido(@PathVariable long id){
-        service.eliminarContenido(id);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+    public ResponseEntity<Void> eliminarContenido(@PathVariable Long id){
+
+        Optional<Contenido> contenidoOptional = service.listarporId(id);
+        System.out.println(contenidoOptional.get().getDescripcion());
+        if(!contenidoOptional.isPresent()){
+            return ResponseEntity.unprocessableEntity().build();
+        }
+        service.eliminarContenido(contenidoOptional.get().getId());
+        return ResponseEntity.ok().build();
     }
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @GetMapping("/listOfAsignatura/{idAsignatura}")

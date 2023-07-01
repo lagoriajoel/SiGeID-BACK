@@ -34,7 +34,7 @@ public class ContenidoServiceImp implements contenidoService{
 
     @Override
     public void eliminarContenido(Long id) {
-        contenidoRepository.deleteById(id);
+        contenidoRepository.deleteContenido(id);
 
 
     }

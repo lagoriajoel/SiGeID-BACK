@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -45,6 +46,11 @@ public class Asignatura {
     @JoinColumn(name="profesor_id")
     private Profesor profesor;
 
-    private String criteriosEvaluacion;
-    private String estrategiasEvaluacion;
+    @OneToMany(mappedBy = "asignatura",  fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<criteriosEvaluacion> criteriosEvaluacion;
+
+    @OneToMany(mappedBy = "asignatura",  fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+   @JsonIgnore
+    private Set<estrategiasEvaluacion> estrategiasEvaluacion;
 }
