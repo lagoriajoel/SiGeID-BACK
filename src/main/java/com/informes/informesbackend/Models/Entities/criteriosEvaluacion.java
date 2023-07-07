@@ -7,13 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class criteriosEvaluacion {
+public class criteriosEvaluacion implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String criterio;
 

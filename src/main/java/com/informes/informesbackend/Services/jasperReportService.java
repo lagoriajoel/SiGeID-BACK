@@ -27,7 +27,6 @@ public class jasperReportService {
 
         Set<ContenidoAdeudado> contenidosAdeudados= new HashSet<ContenidoAdeudado>(informeDesempenio.getContenidosAdeudados());
 
-
         if (alumno.isPresent())
             try {
                 //al crear el jar colocar el path: "target/classes/reportPDF1.jasper"
@@ -52,8 +51,11 @@ public class jasperReportService {
 
 
                 parameters.put("logo", new FileInputStream(imgLogo));
-               parameters.put("ds", new JRBeanCollectionDataSource((Collection<?>) contenidosAdeudados));
+               parameters.put("ds_4", new JRBeanCollectionDataSource((Collection<?>) contenidosAdeudados));
                 parameters.put("ds_1", new JRBeanCollectionDataSource((Collection<?>) contenidosAdeudados));
+              parameters.put("ds_3", new JRBeanCollectionDataSource((Collection<?>) informeDesempenio.getCriteriosEvaluacion()));
+              parameters.put("ds_5",
+                     new JRBeanCollectionDataSource((Collection<?>) informeDesempenio.getEstrategiasEvaluacion()));
 
 
                 JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());

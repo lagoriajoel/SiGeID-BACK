@@ -14,8 +14,8 @@ public class InformesDTO {
     Asignatura asignatura;
     Alumno alumno;
     Set<Contenido> contenidosAdeudados;
-    String criteriosEvaluacion;
-    String estrategiasEvaluacion;
+    Set<criteriosEvaluacion> criteriosEvaluacion;
+    Set<estrategiasEvaluacion> estrategiasEvaluacion;
 
 
 }

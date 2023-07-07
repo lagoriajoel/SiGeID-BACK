@@ -16,13 +16,17 @@ import java.util.*;
 @Table(name = "informes_desempenio")
 
 public class InformeDesempenio implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "informe_id")
     private Long id;
 
-    private String criteriosEvaluacion;
-    private String estrategiasEvaluacion;
+
+    @OneToMany(mappedBy="informeDesempenio", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<criterioInforme> criteriosEvaluacion= new HashSet<>();
+    @OneToMany(mappedBy="informeDesempenio", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<estrategiaInforme> estrategiasEvaluacion=new HashSet<>();
 
     private String profesorNombre;
     @Temporal(TemporalType.DATE)
