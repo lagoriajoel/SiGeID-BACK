@@ -70,8 +70,18 @@ public class informeServiceImp implements informeService{
     }
 
     @Override
-    public List<InformeDesempenio> listarPorNombreAsignatura(String asignatura, String curso) {
-        return informeRepository.findByNombreOfAsignatura(asignatura, curso);
+    public List<InformeDesempenio> listarPorNombreAsignatura(String asignatura, String anio) {
+        return informeRepository.findByNombreOfAsignatura(asignatura, anio);
+    }
+
+    @Override
+    public List<InformeDesempenio> listarPorAnio(String anio) {
+        return informeRepository.findByAnioCurso(anio);
+    }
+
+    @Override
+    public int InformesPorAsignaturasAnio(String Asignatura, String anio) {
+        return informeRepository.findNumInformeByAsignatura(Asignatura, anio);
     }
 
 

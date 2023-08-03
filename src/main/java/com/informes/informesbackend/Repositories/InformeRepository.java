@@ -18,5 +18,9 @@ public interface InformeRepository extends JpaRepository<InformeDesempenio, Long
 
     @Query(value = "SELECT * FROM informes_desempenio where asignatura_id in (SELECT asignatura_id FROM db_informes_nuevo.asignaturas where nombre like :asignatura and anio_curso=:curso);", nativeQuery=true)
     List<InformeDesempenio> findByNombreOfAsignatura(@Param("asignatura") String asignatura , String curso);
+    @Query(value = "SELECT * FROM informes_desempenio where asignatura_id in (SELECT asignatura_id FROM db_informes_nuevo.asignaturas where anio_curso=:curso);", nativeQuery=true)
+    List<InformeDesempenio> findByAnioCurso( String curso);
+    @Query(value = "SELECT count(*) FROM informes_desempenio where asignatura_id in( select asignatura_id from asignaturas where nombre=:asignatura and anio_curso=:anio);", nativeQuery=true)
+    int findNumInformeByAsignatura( String asignatura, String anio);
 
 }

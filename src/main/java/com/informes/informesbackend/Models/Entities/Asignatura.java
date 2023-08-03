@@ -28,7 +28,7 @@ public class Asignatura {
     @NotNull
     private String anioCurso;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private Curso curso;
 
 

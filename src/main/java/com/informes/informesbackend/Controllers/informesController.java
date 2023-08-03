@@ -55,9 +55,17 @@ public class informesController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/listOfNombreAsignatura/{nombre}/{curso}")
-    public ResponseEntity<?> listarPorNombreAsignatura(@PathVariable String nombre, @PathVariable String curso){
-       return ResponseEntity.ok(service.listarPorNombreAsignatura(nombre, curso));
+    @GetMapping("/listOfNombreAsignatura/{nombre}/{anio}")
+    public ResponseEntity<?> listarPorNombreAsignatura(@PathVariable String nombre, @PathVariable String anio){
+       return ResponseEntity.ok(service.listarPorNombreAsignatura(nombre, anio));
+    }
+    @GetMapping("/listOfAnioCurso/{anio}")
+    public ResponseEntity<?> listarPorAnioCurso( @PathVariable String anio){
+        return ResponseEntity.ok(service.listarPorAnio(anio));
+    }
+    @GetMapping("/numInformesMateria/{materia}/{anio}")
+    public ResponseEntity<?> listarPorAnioCurso( @PathVariable String materia, @PathVariable String anio){
+        return ResponseEntity.ok(service.InformesPorAsignaturasAnio(materia,anio));
     }
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @PostMapping("/save")
@@ -198,21 +206,16 @@ public class informesController {
 
         contenidos.forEach(contenido->{
 
-            if(!(contenido.getInstanciaEvaluacion_diciembre()=="aprobado")) {
                 Optional<ContenidoAdeudado> contenidoAdeudado = contenidoAdeudadoService.listarporId(contenido.getId());
+            if (!contenidoAdeudado.get().isAprobado()) {
                 contenidoAdeudado.get().setInstanciaEvaluacion_diciembre(contenido.getInstanciaEvaluacion_diciembre());
                 contenidoAdeudado.get().setAprobado(contenido.isAprobado());
 
                 contenidoAdeudadoService.guardar(contenidoAdeudado.get());
             }
-
-
         });
 
         return ResponseEntity.ok().build();
-
-
-
 
 
     }
@@ -222,13 +225,16 @@ public class informesController {
 
         contenidos.forEach(contenido->{
 
-            if(!(contenido.getInstanciaEvaluacion_diciembre()=="aprobado")) {
                 Optional<ContenidoAdeudado> contenidoAdeudado = contenidoAdeudadoService.listarporId(contenido.getId());
-                contenidoAdeudado.get().setInstanciaEvaluacion_febrero(contenido.getInstanciaEvaluacion_febrero());
-                contenidoAdeudado.get().setAprobado(contenido.isAprobado());
-
-                contenidoAdeudadoService.guardar(contenidoAdeudado.get());
-            }
+                if (!contenidoAdeudado.get().isAprobado()) {
+                    contenidoAdeudado.get().setInstanciaEvaluacion_febrero(contenido.getInstanciaEvaluacion_febrero());
+                    contenidoAdeudado.get().setAprobado(contenido.isAprobado());
+                    contenidoAdeudadoService.guardar(contenidoAdeudado.get());
+                }
+                else{
+                    contenidoAdeudado.get().setInstanciaEvaluacion_febrero("---");
+                    contenidoAdeudadoService.guardar(contenidoAdeudado.get());
+                }
 
         });
 

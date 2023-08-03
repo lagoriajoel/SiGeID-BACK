@@ -2,6 +2,7 @@ package com.informes.informesbackend.Services;
 
 import com.informes.informesbackend.Models.Entities.ContenidoAdeudado;
 import com.informes.informesbackend.Models.Entities.InformeDesempenio;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,9 @@ public interface informeService {
 
     Optional<InformeDesempenio> encontrarAlumno(Long alumno_id, Long id_asignatura);
 
-    List<InformeDesempenio> listarPorNombreAsignatura(String asignatura, String curso);
+    List<InformeDesempenio> listarPorNombreAsignatura(String asignatura, String anio);
 
+    List<InformeDesempenio> listarPorAnio(String anio);
+
+    int InformesPorAsignaturasAnio(String Asignatura, String anio);
 }

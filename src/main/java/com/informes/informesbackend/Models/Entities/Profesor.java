@@ -34,7 +34,7 @@ public class Profesor {
     @Email
     private String email;
 
-    @OneToMany(mappedBy = "profesor",fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "profesor",fetch = FetchType.EAGER)
     /**al aplicar jsonIgnore se soluciona el error multi-back reference **/
     @JsonIgnore
     private Set<Asignatura> asignaturas=new HashSet<>();

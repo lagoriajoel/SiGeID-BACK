@@ -22,7 +22,6 @@ public class InformeDesempenio implements Serializable {
     @Column(name = "informe_id")
     private Long id;
 
-
     @OneToMany(mappedBy="informeDesempenio", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<criterioInforme> criteriosEvaluacion= new HashSet<>();
     @OneToMany(mappedBy="informeDesempenio", fetch = FetchType.EAGER, cascade = CascadeType.ALL)

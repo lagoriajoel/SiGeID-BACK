@@ -49,7 +49,7 @@ public class alumnoController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR') or hasRole('DIRECTIVO')")
     @GetMapping("/list")
     public ResponseEntity<List<Alumno>> listar(){
       return ResponseEntity.ok(service.listar());
@@ -63,7 +63,7 @@ public class alumnoController {
         }
         return ResponseEntity.notFound().build();
     }
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR') or hasRole('DIRECTIVO')")
     @GetMapping("/listOfDni/{dni}")
     public ResponseEntity<?> listarPorDNI(@PathVariable String dni){
         Optional<Alumno> usuarioOptional= service.listarporDni(dni);
@@ -72,10 +72,15 @@ public class alumnoController {
         }
         return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El DNI ingresado no pertenece a un Alumno"));
     }
-    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR') or hasRole('DIRECTIVO')")
     @GetMapping("/listOfCurso/{id}")
     public ResponseEntity<?> listaPorCurso(@PathVariable Long id){
       return  ResponseEntity.ok(service.listarPorCurso(id));
+    }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR') or hasRole('DIRECTIVO')")
+    @GetMapping("/listOfAnioCurso/{anio}")
+    public ResponseEntity<?> listaPorAnioCurso(@PathVariable String anio){
+        return  ResponseEntity.ok(service.listarPorAnioCurso(anio));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

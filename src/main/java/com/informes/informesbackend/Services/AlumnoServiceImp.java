@@ -55,6 +55,11 @@ public class AlumnoServiceImp implements AlumnoService{
          return (List<Alumno>)alumnoRepository.findBycurso(idCurso);
     }
 
+    @Override
+    public List<Alumno> listarPorAnioCurso(String anio) {
+        return alumnoRepository.findByAnioCurso(anio);
+    }
+
     public List<Alumno> guardarLista(List<Alumno> alumnos){
         return alumnoRepository.saveAll(alumnos);
     }
