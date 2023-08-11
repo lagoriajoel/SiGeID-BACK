@@ -22,4 +22,6 @@ public interface AlumnoService {
     List<Alumno>listarPorAnioCurso(String idCurso);
 
     List<Alumno> guardarLista(List<Alumno> alumnos);
+
+    int numAlumnosPorAnio(String anio);
 }

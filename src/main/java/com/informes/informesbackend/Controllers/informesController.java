@@ -67,6 +67,10 @@ public class informesController {
     public ResponseEntity<?> listarPorAnioCurso( @PathVariable String materia, @PathVariable String anio){
         return ResponseEntity.ok(service.InformesPorAsignaturasAnio(materia,anio));
     }
+    @GetMapping("/numAlumnosConInformePorAnio/{anio}")
+    public ResponseEntity<?> NumAlumnosConInformes(  @PathVariable String anio){
+        return ResponseEntity.ok(service.NumAlumnosConInformesPorAnio(anio));
+    }
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @PostMapping("/save")
     public ResponseEntity<?> crearInforme(@Valid @RequestBody InformesDTO informeDto, BindingResult result){

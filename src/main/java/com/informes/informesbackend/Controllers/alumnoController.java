@@ -63,7 +63,7 @@ public class alumnoController {
         }
         return ResponseEntity.notFound().build();
     }
-    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR') or hasRole('DIRECTIVO')")
+
     @GetMapping("/listOfDni/{dni}")
     public ResponseEntity<?> listarPorDNI(@PathVariable String dni){
         Optional<Alumno> usuarioOptional= service.listarporDni(dni);
@@ -76,6 +76,12 @@ public class alumnoController {
     @GetMapping("/listOfCurso/{id}")
     public ResponseEntity<?> listaPorCurso(@PathVariable Long id){
       return  ResponseEntity.ok(service.listarPorCurso(id));
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR') or hasRole('DIRECTIVO')")
+    @GetMapping("/numAlumnosPorAnio/{anio}")
+    public ResponseEntity<?> numeroAlumnosPorAnio(@PathVariable String anio){
+        return  ResponseEntity.ok(service.numAlumnosPorAnio(anio));
     }
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR') or hasRole('DIRECTIVO')")
     @GetMapping("/listOfAnioCurso/{anio}")

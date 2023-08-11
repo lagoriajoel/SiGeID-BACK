@@ -63,4 +63,8 @@ public class AlumnoServiceImp implements AlumnoService{
     public List<Alumno> guardarLista(List<Alumno> alumnos){
         return alumnoRepository.saveAll(alumnos);
     }
+    @Override
+    public int numAlumnosPorAnio(String anio){
+        return alumnoRepository.findNumAlumnosByAnio(anio);
+    }
 }

@@ -24,7 +24,7 @@ public class asignaturasController {
     private AsignaturaService asignaturaService;
     @Autowired
     private ProfesorService profesorService;
-    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR') or hasRole('DIRECTIVO')")
     @GetMapping("list")
     public ResponseEntity<Collection<Asignatura>> listarAsignaturas(){
         return new ResponseEntity<>(asignaturaService.listar(), HttpStatus.OK);
@@ -45,6 +45,18 @@ public class asignaturasController {
     @GetMapping("listOfProfesor/{id}")
     public ResponseEntity<?> listarPorProfesor(@PathVariable Long id){
         List<Asignatura> asignaturas = asignaturaService.listarPorProfesor(id);
+
+        if(!asignaturas.isEmpty()) {
+            return new ResponseEntity<>(asignaturas,HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTIVO')")
+    @GetMapping("listOfCurso/{idCurso}")
+    public ResponseEntity<?> listarPorCurso(@PathVariable Long idCurso){
+        List<Asignatura> asignaturas = asignaturaService.listarPorCurso(idCurso);
 
         if(!asignaturas.isEmpty()) {
             return new ResponseEntity<>(asignaturas,HttpStatus.OK);

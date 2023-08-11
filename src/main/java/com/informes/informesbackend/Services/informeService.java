@@ -25,4 +25,5 @@ public interface informeService {
     List<InformeDesempenio> listarPorAnio(String anio);
 
     int InformesPorAsignaturasAnio(String Asignatura, String anio);
+    int NumAlumnosConInformesPorAnio(String anio);
 }

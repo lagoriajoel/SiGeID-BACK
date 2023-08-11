@@ -16,6 +16,8 @@ public interface AsignaturaService {
     void eliminar(Long id);
 
     List<Asignatura> listarPorProfesor(Long idProfesor);
+    List<Asignatura> listarPorCurso(Long idCurso);
+
 
     public void GuardarAsignaturas(Set<Asignatura> asignaturas);
 

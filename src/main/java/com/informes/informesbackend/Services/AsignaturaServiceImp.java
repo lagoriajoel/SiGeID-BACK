@@ -38,6 +38,12 @@ public class AsignaturaServiceImp implements AsignaturaService{
     public List<Asignatura> listarPorProfesor(Long idProfesor) {
         return asignaturaRepository.asignaturasByProfesor(idProfesor);
     }
+
+    @Override
+    public List<Asignatura> listarPorCurso(Long idCurso) {
+        return asignaturaRepository.asignaturasByCurso(idCurso);
+    }
+
     public void GuardarAsignaturas(Set<Asignatura> asignaturas) {
 
         asignaturaRepository.saveAll(asignaturas);

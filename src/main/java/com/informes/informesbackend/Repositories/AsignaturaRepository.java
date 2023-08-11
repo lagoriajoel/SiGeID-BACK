@@ -14,4 +14,6 @@ public interface AsignaturaRepository extends JpaRepository<Asignatura, Long> {
     Optional<Asignatura> asignarProfesor(Long idAsignatura);
     @Query(value = "SELECT * FROM asignaturas where profesor_id=:idProfesor", nativeQuery=true)
     List<Asignatura> asignaturasByProfesor(Long idProfesor);
+    @Query(value = "SELECT * FROM asignaturas where curso_id_curso=:idCurso", nativeQuery=true)
+    List<Asignatura> asignaturasByCurso(Long idCurso);
 }
