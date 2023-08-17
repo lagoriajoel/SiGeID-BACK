@@ -28,14 +28,11 @@ public class InformeDesempenio implements Serializable {
     private Set<estrategiaInforme> estrategiasEvaluacion=new HashSet<>();
 
     private String profesorNombre;
-    @Temporal(TemporalType.DATE)
-    private Date fechaInstancia_1;
-    @Temporal(TemporalType.DATE)
-    private Date fechaInstancia_2;
-    @Temporal(TemporalType.DATE)
-    private Date fechaInstancia_3;
-    @Temporal(TemporalType.DATE)
-    private Date fechaInstancia_4;
+
+    private String fechaInstancia_1;
+    private String fechaInstancia_2;
+    private String fechaInstancia_3;
+    private String fechaInstancia_4;
 
     private String presidenteMesaInstancia_1="";
     private String presidenteMesaInstancia_2="";

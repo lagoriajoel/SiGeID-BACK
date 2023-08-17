@@ -46,6 +46,22 @@ public class jasperReportService {
                 parameters.put("cicloLectivo", alumno1.getCurso().getCicloLectivo());
                 parameters.put("asignatura", informeDesempenio.getAsignatura().getNombre());
                 parameters.put("profesor", informeDesempenio.getProfesorNombre());
+                parameters.put("fechaInstancia_1", informeDesempenio.getFechaInstancia_1());
+                parameters.put("fechaInstancia_2", informeDesempenio.getFechaInstancia_2());
+                parameters.put("fechaInstancia_3", informeDesempenio.getFechaInstancia_3());
+                parameters.put("fechaInstancia_4", informeDesempenio.getFechaInstancia_4());
+                parameters.put("presidenteMesaInstancia_1", informeDesempenio.getPresidenteMesaInstancia_1());
+                parameters.put("presidenteMesaInstancia_2", informeDesempenio.getPresidenteMesaInstancia_2());
+                parameters.put("presidenteMesaInstancia_3", informeDesempenio.getPresidenteMesaInstancia_3());
+                parameters.put("presidenteMesaInstancia_4", informeDesempenio.getPresidenteMesaInstancia_4());
+
+
+
+
+
+
+
+
 
 
 

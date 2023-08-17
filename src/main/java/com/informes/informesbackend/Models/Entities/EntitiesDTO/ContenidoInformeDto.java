@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContenidoAdeudadoDto {
-    private String nombre;
-    private String descripcion;
+public class ContenidoInformeDto {
+    private Long id;
+    private String instanciaEvaluacion = "";
+    private boolean aprobado;
 }
+

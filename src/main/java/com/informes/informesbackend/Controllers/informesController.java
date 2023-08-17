@@ -1,7 +1,9 @@
 package com.informes.informesbackend.Controllers;
 
 import com.informes.informesbackend.Models.Entities.*;
+import com.informes.informesbackend.Models.Entities.EntitiesDTO.ContenidoInformeDto;
 import com.informes.informesbackend.Models.Entities.EntitiesDTO.InformesDTO;
+import com.informes.informesbackend.Models.Entities.EntitiesDTO.informeContenidoDto;
 import com.informes.informesbackend.Services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class informesController {
 
     @Autowired
-    private informeService service;
+    private informeService informeService;
     @Autowired
     private AlumnoService alumnoService;
     @Autowired
@@ -34,12 +36,12 @@ public class informesController {
     @GetMapping("/list")
     @CrossOrigin("*")
     public ResponseEntity<List<InformeDesempenio>> listarInformes(){
-        return (ResponseEntity<List<InformeDesempenio>>) ResponseEntity.ok(service.listar());
+        return (ResponseEntity<List<InformeDesempenio>>) ResponseEntity.ok(informeService.listar());
     }
 
     @GetMapping("/list/{id}")
     public ResponseEntity<?> detalle(@PathVariable Long id){
-        Optional<InformeDesempenio> informeDesempeñoOptional = service.listarporId(id);
+        Optional<InformeDesempenio> informeDesempeñoOptional = informeService.listarporId(id);
         if (informeDesempeñoOptional.isPresent()){
             return ResponseEntity.ok(informeDesempeñoOptional.get());
         }
@@ -48,7 +50,7 @@ public class informesController {
 
     @GetMapping("/listOfAsignatura/{idAsignatura}")
     public ResponseEntity<?> listarPorAsignatura(@PathVariable Long idAsignatura){
-        List<InformeDesempenio> informeDesempenioOptional = service.listarPorAsignatura(idAsignatura);
+        List<InformeDesempenio> informeDesempenioOptional = informeService.listarPorAsignatura(idAsignatura);
         if (!informeDesempenioOptional.isEmpty()){
             return ResponseEntity.ok(informeDesempenioOptional);
         }
@@ -57,25 +59,25 @@ public class informesController {
 
     @GetMapping("/listOfNombreAsignatura/{nombre}/{anio}")
     public ResponseEntity<?> listarPorNombreAsignatura(@PathVariable String nombre, @PathVariable String anio){
-       return ResponseEntity.ok(service.listarPorNombreAsignatura(nombre, anio));
+       return ResponseEntity.ok(informeService.listarPorNombreAsignatura(nombre, anio));
     }
     @GetMapping("/listOfAnioCurso/{anio}")
     public ResponseEntity<?> listarPorAnioCurso( @PathVariable String anio){
-        return ResponseEntity.ok(service.listarPorAnio(anio));
+        return ResponseEntity.ok(informeService.listarPorAnio(anio));
     }
     @GetMapping("/numInformesMateria/{materia}/{anio}")
     public ResponseEntity<?> listarPorAnioCurso( @PathVariable String materia, @PathVariable String anio){
-        return ResponseEntity.ok(service.InformesPorAsignaturasAnio(materia,anio));
+        return ResponseEntity.ok(informeService.InformesPorAsignaturasAnio(materia,anio));
     }
     @GetMapping("/numAlumnosConInformePorAnio/{anio}")
     public ResponseEntity<?> NumAlumnosConInformes(  @PathVariable String anio){
-        return ResponseEntity.ok(service.NumAlumnosConInformesPorAnio(anio));
+        return ResponseEntity.ok(informeService.NumAlumnosConInformesPorAnio(anio));
     }
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @PostMapping("/save")
     public ResponseEntity<?> crearInforme(@Valid @RequestBody InformesDTO informeDto, BindingResult result){
 
-     if (service.encontrarAlumno(informeDto.getAlumno().getId(), informeDto.getAsignatura().getAsignatura_id()).isPresent()) {
+     if (informeService.encontrarAlumno(informeDto.getAlumno().getId(), informeDto.getAsignatura().getAsignatura_id()).isPresent()) {
          return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El Informe para este alumno ya existe"));
        }
      if (informeDto.getCriteriosEvaluacion().isEmpty() || informeDto.getEstrategiasEvaluacion().isEmpty()) {
@@ -88,7 +90,7 @@ public class informesController {
         nuevoInforme.setAsignatura(informeDto.getAsignatura());
         nuevoInforme.setProfesorNombre(informeDto.getProfesorNombre());
         nuevoInforme.setFecha((rightNow.getTime()));
-        InformeDesempenio informeDB = service.guardar(nuevoInforme);
+        InformeDesempenio informeDB = informeService.guardar(nuevoInforme);
        /** se crea un conjunto de tipo contenidoInforme y se instancian cada contenidoInforme **/
         Set<Contenido> contenidosInformeDto=informeDto.getContenidosAdeudados();
         Set<ContenidoAdeudado> contenidoAdeudados=new HashSet<>();
@@ -130,18 +132,18 @@ public class informesController {
         informeDB.setContenidosAdeudados(ListaContenidos);
         informeDB.setCriteriosEvaluacion((Set<criterioInforme>) listaCriteriosSet);
         informeDB.setEstrategiasEvaluacion(ListaEstrategiasSet);
-        InformeDesempenio informeDesempenio= service.guardar(informeDB);
+        InformeDesempenio informeDesempenio= informeService.guardar(informeDB);
         if(result.hasErrors()){
             return validar(result);
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.guardar(informeDesempenio));
+        return ResponseEntity.status(HttpStatus.CREATED).body(informeService.guardar(informeDesempenio));
     }
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @PutMapping("agregarContenidos/{idInforme}")
     public ResponseEntity<?> agregarContenidos(@RequestBody InformeDesempenio informe, @PathVariable Long idInforme){
 
-        Optional<InformeDesempenio> informeDesempeñoOptional = service.listarporId(idInforme);
+        Optional<InformeDesempenio> informeDesempeñoOptional = informeService.listarporId(idInforme);
         if (!informeDesempeñoOptional.isPresent()) {
             return ResponseEntity.unprocessableEntity().build();
         }
@@ -159,7 +161,7 @@ public class informesController {
 
 
         informe.setId(informeDesempeñoOptional.get().getId());
-        service.guardar(informe);
+        informeService.guardar(informe);
 
         return ResponseEntity.noContent().build();
     }
@@ -167,28 +169,77 @@ public class informesController {
     @PutMapping("update/{id}")
     public ResponseEntity<?> editarInforme(@RequestBody InformeDesempenio informe, @PathVariable Long id){
 
-        Optional<InformeDesempenio> informeDesempeñoOptional = service.listarporId(id);
+        Optional<InformeDesempenio> informeDesempeñoOptional = informeService.listarporId(id);
         if (!informeDesempeñoOptional.isPresent()) {
             return ResponseEntity.unprocessableEntity().build();
         }
 
 
         informe.setId(informeDesempeñoOptional.get().getId());
-        service.guardar(informe);
+        informeService.guardar(informe);
 
         return ResponseEntity.noContent().build();
+    }
+    @PreAuthorize("hasRole('PROFESOR')")
+    @PutMapping("actualizarInformeMesa/{id}")
+    public ResponseEntity<?> actualizarInformeMesa(@RequestBody informeContenidoDto informe, @PathVariable Long id){
+
+        Optional<InformeDesempenio> informeDesempeñoOptional = informeService.listarporId(id);
+        if (!informeDesempeñoOptional.isPresent()) {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+        System.out.println(informe);
+        if(informeDesempeñoOptional.get().getPresidenteMesaInstancia_1().isBlank()){
+            System.out.println("instancia 1");
+
+            informeDesempeñoOptional.get().setPresidenteMesaInstancia_1(informe.getPresidente_mesa_instancia());
+            informeDesempeñoOptional.get().setFechaInstancia_1(informe.getFecha_instancia());
+            informeService.guardar(informeDesempeñoOptional.get());
+        }
+       else{
+            if(informeDesempeñoOptional.get().getPresidenteMesaInstancia_2().isBlank()){
+                System.out.println("instancia 2");
+                informeDesempeñoOptional.get().setPresidenteMesaInstancia_2(informe.getPresidente_mesa_instancia());
+                informeDesempeñoOptional.get().setFechaInstancia_2(informe.getFecha_instancia());
+                informeService.guardar(informeDesempeñoOptional.get());
+            }
+            else{
+                if(informeDesempeñoOptional.get().getPresidenteMesaInstancia_3().isBlank()){
+                    System.out.println("instancia 3");
+                    informeDesempeñoOptional.get().setPresidenteMesaInstancia_3(informe.getPresidente_mesa_instancia());
+                    informeDesempeñoOptional.get().setFechaInstancia_3(informe.getFecha_instancia());
+                    informeService.guardar(informeDesempeñoOptional.get());
+                }
+                else{
+                    if(informeDesempeñoOptional.get().getPresidenteMesaInstancia_4().isBlank()){
+                        System.out.println("instancia 4");
+                        informeDesempeñoOptional.get().setPresidenteMesaInstancia_4(informe.getPresidente_mesa_instancia());
+                        informeDesempeñoOptional.get().setFechaInstancia_4(informe.getFecha_instancia());
+                        informeService.guardar(informeDesempeñoOptional.get());
+                    }
+
+                }
+            }
+        }
+
+
+
+
+
+
+        return ResponseEntity.ok().build();
     }
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     @DeleteMapping("delete/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id){
-        Optional<InformeDesempenio> informeDesempeñoOptional = service.listarporId(id);
+        Optional<InformeDesempenio> informeDesempeñoOptional = informeService.listarporId(id);
 
 
         if(!informeDesempeñoOptional.isPresent()){
             return ResponseEntity.unprocessableEntity().build();
         }
 
-        service.eliminarInforme( informeDesempeñoOptional.get().getId());
+        informeService.eliminarInforme( informeDesempeñoOptional.get().getId());
         return ResponseEntity.noContent().build();
 
 
@@ -201,7 +252,7 @@ public class informesController {
             @PathVariable Long idInforme,
            @RequestBody List<ContenidoAdeudado> contenidos
     ){
-        return  service.asignarContenidoAdeudado(idInforme, contenidos);
+        return  informeService.asignarContenidoAdeudado(idInforme, contenidos);
     }
 
     @PreAuthorize("hasRole('PROFESOR')")
@@ -237,6 +288,7 @@ public class informesController {
                 }
                 else{
                     contenidoAdeudado.get().setInstanciaEvaluacion_febrero("---");
+                    contenidoAdeudado.get().setAprobado(contenido.isAprobado());
                     contenidoAdeudadoService.guardar(contenidoAdeudado.get());
                 }
 
@@ -246,6 +298,57 @@ public class informesController {
 
 
 
+
+
+    }
+
+    @PreAuthorize("hasRole('PROFESOR')")
+    @PutMapping("/actualizarContenidoExamen/")
+    public ResponseEntity<?> actualizarContenidoMesaExamen( @RequestBody List<ContenidoInformeDto> contenidos){
+
+
+
+
+        contenidos.forEach(contenido->{
+            System.out.println("en contenidos examen");
+            Optional<ContenidoAdeudado> contenidoAdeudado = contenidoAdeudadoService.listarporId(contenido.getId());
+            if (!contenidoAdeudado.get().isAprobado()) {
+                if(contenidoAdeudado.get().getInstanciaEvaluacion_1().isEmpty()){
+
+                contenidoAdeudado.get().setInstanciaEvaluacion_1(contenido.getInstanciaEvaluacion());
+                contenidoAdeudado.get().setAprobado(contenido.isAprobado());
+                    contenidoAdeudadoService.guardar(contenidoAdeudado.get());
+                }
+                else {
+                    if(contenidoAdeudado.get().getInstanciaEvaluacion_2().isEmpty()){
+                        contenidoAdeudado.get().setInstanciaEvaluacion_2(contenido.getInstanciaEvaluacion());
+                        contenidoAdeudado.get().setAprobado(contenido.isAprobado());
+                        contenidoAdeudadoService.guardar(contenidoAdeudado.get());}
+                    else {
+                        if(contenidoAdeudado.get().getInstanciaEvaluacion_3().isEmpty()){
+                            contenidoAdeudado.get().setInstanciaEvaluacion_3(contenido.getInstanciaEvaluacion());
+                            contenidoAdeudado.get().setAprobado(contenido.isAprobado());
+                            contenidoAdeudadoService.guardar(contenidoAdeudado.get());
+                        }
+                        else {
+                            if(contenidoAdeudado.get().getInstanciaEvaluacion_3().isEmpty()){
+                            contenidoAdeudado.get().setInstanciaEvaluacion_4(contenido.getInstanciaEvaluacion());
+                            contenidoAdeudado.get().setAprobado(contenido.isAprobado());
+                            contenidoAdeudadoService.guardar(contenidoAdeudado.get());}
+
+                        }
+                        }
+                    }
+
+                }
+
+
+        });
+
+
+
+
+        return ResponseEntity.ok().build();
 
 
     }

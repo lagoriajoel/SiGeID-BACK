@@ -49,6 +49,9 @@ public class cursoController {
         if(result.hasErrors()){
             return validar(result);
         }
+        if(curso.getAnio().equals("1") || curso.getAnio().equals("2") ){
+            curso.setTecnicatura("-");
+        }
 
         Curso cursoDB = service.guardar(curso);
         crearAsignaturas(cursoDB);

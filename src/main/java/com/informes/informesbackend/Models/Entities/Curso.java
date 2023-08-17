@@ -30,6 +30,8 @@ public class Curso {
     @NotBlank
     private String turno;
     @NotBlank
+    private String tecnicatura;
+    @NotBlank
     private String cicloLectivo;
 
 
