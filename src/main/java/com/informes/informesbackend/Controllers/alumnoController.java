@@ -157,19 +157,29 @@ public class alumnoController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
 
-    public ResponseEntity<Alumno> eliminarAlumno(@PathVariable Long id){
+    public ResponseEntity<?> eliminarAlumno(@PathVariable Long id){
         Optional<Alumno> alumnoOptional = service.listarporId(id);
 
         if(!alumnoOptional.isPresent()){
             return ResponseEntity.unprocessableEntity().build();
         }
+        if (informeService.listarPorAlumno(alumnoOptional.get().getId()).size()>0){
 
-        Optional<Usuario> usuario= usuarioService.getByNombreUsuario( alumnoOptional.get().getDni());
+            return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "No se puede Eliminar el alumno"));
+        }
 
-        usuarioService.delete(usuario.get().getId());
+            Optional<Usuario> usuario= usuarioService.getByNombreUsuario( alumnoOptional.get().getDni());
 
-        service.eliminar(alumnoOptional.get().getId());
-        return ResponseEntity.ok().build();
+            service.eliminar(alumnoOptional.get().getId());
+         System.out.println("en alumnos");
+
+            usuarioService.delete(usuario.get().getId());
+
+
+            return ResponseEntity.ok().build();
+
+
+
     }
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/{id}/informes")

@@ -38,6 +38,7 @@ public class InformeDesempenio implements Serializable {
     private String presidenteMesaInstancia_2="";
     private String presidenteMesaInstancia_3="";
     private String presidenteMesaInstancia_4="";
+    private boolean flag=false;
 
 
     @Column(name = "Fecha_Creacion", updatable = false, nullable = false)

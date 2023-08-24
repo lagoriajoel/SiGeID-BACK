@@ -63,6 +63,11 @@ public class informeServiceImp implements informeService{
         return informeRepository.findByAsignatura(id_asignatura);
     }
 
+    @Override
+    public List<InformeDesempenio> listarPorAlumno(Long idAlumno) {
+        return informeRepository.FindByAlumnoId(idAlumno);
+    }
+
 
     @Override
     public Optional<InformeDesempenio> encontrarAlumno(Long alumno_id, Long id_asignatura) {

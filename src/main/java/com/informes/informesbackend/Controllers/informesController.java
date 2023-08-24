@@ -188,6 +188,10 @@ public class informesController {
         if (!informeDesempeñoOptional.isPresent()) {
             return ResponseEntity.unprocessableEntity().build();
         }
+        if (!informeDesempeñoOptional.get().isFlag()){
+            return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El Informe ya no tiene Instancias de Exaluación"));
+
+        }
         System.out.println(informe);
         if(informeDesempeñoOptional.get().getPresidenteMesaInstancia_1().isBlank()){
             System.out.println("instancia 1");
@@ -215,7 +219,9 @@ public class informesController {
                         System.out.println("instancia 4");
                         informeDesempeñoOptional.get().setPresidenteMesaInstancia_4(informe.getPresidente_mesa_instancia());
                         informeDesempeñoOptional.get().setFechaInstancia_4(informe.getFecha_instancia());
+                        informeDesempeñoOptional.get().setFlag(true);
                         informeService.guardar(informeDesempeñoOptional.get());
+
                     }
 
                 }

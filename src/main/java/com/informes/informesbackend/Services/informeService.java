@@ -17,6 +17,7 @@ public interface informeService {
     void eliminarInforme(Long id);
 
     List<InformeDesempenio> listarPorAsignatura(Long idAsignatura);
+    List<InformeDesempenio> listarPorAlumno(Long idAlumno);
 
     Optional<InformeDesempenio> encontrarAlumno(Long alumno_id, Long id_asignatura);
 

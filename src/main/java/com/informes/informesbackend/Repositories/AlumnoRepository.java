@@ -22,5 +22,4 @@ public interface AlumnoRepository extends JpaRepository<Alumno, Long> {
     @Query(value = "SELECT count(*) FROM alumnos where curso in (select id_curso from cursos where anio=:anio)", nativeQuery=true)
     int findNumAlumnosByAnio(String anio);
 
-
 }
