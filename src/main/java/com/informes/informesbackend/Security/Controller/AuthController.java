@@ -88,6 +88,14 @@ public class AuthController {
 
 
     }
+    @GetMapping("/list/{username}")
+        public ResponseEntity<?> listByNameUser(@PathVariable String username){
+
+        return ResponseEntity.ok(usuarioService.getByNombreUsuario(username));
+
+
+        }
+
 
     @PutMapping("/changePassword/{nombreUsuario}")
     public ResponseEntity<?> cambiarContraenia(@PathVariable String nombreUsuario , @RequestBody changePassword changePassword){
@@ -97,6 +105,18 @@ public class AuthController {
 
         if (!check)
             return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "La contraseña actual es incorrecta"));
+        if(!usuarioOptional.isPresent())
+            return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "Usuario no encontrado"));
+
+        usuarioOptional.get().setPassword(passwordEncoder.encode(changePassword.getNewPassword()));
+        usuarioService.save(usuarioOptional.get());
+        return ResponseEntity.ok().build();
+    }
+    @PutMapping("/blanquearPassword/{nombreUsuario}")
+    public ResponseEntity<?> blanquearContraenia(@PathVariable String nombreUsuario , @RequestBody changePassword changePassword){
+        Optional<Usuario> usuarioOptional= usuarioService.getByNombreUsuario(nombreUsuario);
+
+
         if(!usuarioOptional.isPresent())
             return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "Usuario no encontrado"));
 
