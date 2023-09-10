@@ -32,14 +32,10 @@ public class alumnoController {
     private CursoService cursoService;
     @Autowired
     private informeService informeService;
-
-
     @Autowired
     private final  jasperReportService  jasperReportService;
-
     @Autowired
     private guardarUsuarioService guardarUsuarioService;
-
     @Autowired
     private UsuarioService usuarioService;
 
@@ -205,9 +201,6 @@ public class alumnoController {
         Optional<Alumno> alumno1=service.listarporDni(dniAlumno);
 
         Optional<InformeDesempenio> informe= informeService.listarporId(informeId);
-
-
-
         return this.jasperReportService.exportInvoice(alumno1, informe.get());
     }
     @PreAuthorize("hasRole('ADMIN')")

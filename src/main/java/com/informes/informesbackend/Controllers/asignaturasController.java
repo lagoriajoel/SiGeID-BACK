@@ -78,6 +78,18 @@ public class asignaturasController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("update/{id}")
+    public ResponseEntity<Void> editarAsignatura(@RequestBody Asignatura asignatura,@PathVariable long id){
+       Optional<Asignatura> optionalAsignatura= asignaturaService.listarporId(id);
+       if (!optionalAsignatura.isPresent()){
+           return ResponseEntity.unprocessableEntity().build();
+       }
+       asignatura.setAsignatura_id(optionalAsignatura.get().getAsignatura_id());
+       asignaturaService.guardar(asignatura);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/asignar/{idProfesor}/Asignatura/{idAsignatura}")
     public ResponseEntity<?> asignarProfesor (@PathVariable Long idProfesor, @PathVariable Long idAsignatura){
         Optional<Profesor> profesorOptional= profesorService.listarporId(idProfesor);

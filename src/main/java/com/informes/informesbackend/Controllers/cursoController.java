@@ -107,11 +107,16 @@ public class cursoController {
     @CrossOrigin("*")
     public ResponseEntity<?> eliminar(@PathVariable Long id){
         Optional<Curso> optionalCurso = service.porId(id);
-        if(optionalCurso.isPresent()){
+
+        if(optionalCurso.get().getAlumnos().isEmpty()){
             service.eliminar(optionalCurso.get().getIdCurso());
             return ResponseEntity.ok().build();
         }
-        return ResponseEntity.notFound().build();
+        else {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("Mensaje", "El Curso no se puede eliminar. contiene alumnos"));
+
+        }
+
 
          }
 
