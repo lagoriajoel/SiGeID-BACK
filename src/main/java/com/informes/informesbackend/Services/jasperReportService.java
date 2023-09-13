@@ -33,8 +33,12 @@ public class jasperReportService {
 
 
                 final Alumno alumno1 = alumno.get();
-                final File file = ResourceUtils.getFile("classpath:reportPDF1.jasper");
-                final File imgLogo = ResourceUtils.getFile("classpath:logoCPE.png");
+               final File file = ResourceUtils.getFile("classpath:reportPDF1.jasper");
+                //final File file = ResourceUtils.getFile("target/classes/reportPDF1.jasper");
+
+              //  final File imgLogo = ResourceUtils.getFile("classpath:logoCPE.png");
+                final File imgLogo = ResourceUtils.getFile("target/classes/logoCPE.png");
+
                 final JasperReport report = (JasperReport) JRLoader.loadObject(file);
                 final HashMap<String, Object> parameters = new HashMap<>();
                 parameters.put("nombre", alumno1.getNombreCompleto());
