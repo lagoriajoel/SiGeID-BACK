@@ -3,11 +3,14 @@ package com.informes.informesbackend.Services;
 import com.informes.informesbackend.Models.Entities.Alumno;
 import com.informes.informesbackend.Models.Entities.ContenidoAdeudado;
 import com.informes.informesbackend.Models.Entities.InformeDesempenio;
+import lombok.val;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,8 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -26,20 +28,18 @@ public class jasperReportService {
     public ResponseEntity<Resource> exportInvoice(Optional<Alumno> alumno, InformeDesempenio informeDesempenio) {
 
         Set<ContenidoAdeudado> contenidosAdeudados= new HashSet<ContenidoAdeudado>(informeDesempenio.getContenidosAdeudados());
-
         if (alumno.isPresent())
             try {
-                //al crear el jar colocar el path: "target/classes/reportPDF1.jasper"
-
-
                 final Alumno alumno1 = alumno.get();
-               final File file = ResourceUtils.getFile("classpath:reportPDF1.jasper");
-                //final File file = ResourceUtils.getFile("target/classes/reportPDF1.jasper");
 
-              //  final File imgLogo = ResourceUtils.getFile("classpath:logoCPE.png");
-                final File imgLogo = ResourceUtils.getFile("target/classes/logoCPE.png");
+                // target/classes/reportPDF1.jasper
+                final File file = ResourceUtils.getFile("/app/target/classes/reportPDF1.jasper");
+
+                final File imgLogo = ResourceUtils.getFile("/app/target/classes/logoCPE.png");
+
 
                 final JasperReport report = (JasperReport) JRLoader.loadObject(file);
+
                 final HashMap<String, Object> parameters = new HashMap<>();
                 parameters.put("nombre", alumno1.getNombreCompleto());
                 parameters.put("dni", alumno1.getDni());
@@ -70,12 +70,13 @@ public class jasperReportService {
 
 
 
-                parameters.put("logo", new FileInputStream(imgLogo));
+               // parameters.put("logo", new FileInputStream(imgLogo));
                parameters.put("ds_4", new JRBeanCollectionDataSource((Collection<?>) contenidosAdeudados));
                 parameters.put("ds_1", new JRBeanCollectionDataSource((Collection<?>) contenidosAdeudados));
               parameters.put("ds_3", new JRBeanCollectionDataSource((Collection<?>) informeDesempenio.getCriteriosEvaluacion()));
               parameters.put("ds_5",
                      new JRBeanCollectionDataSource((Collection<?>) informeDesempenio.getEstrategiasEvaluacion()));
+
 
 
                 JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());

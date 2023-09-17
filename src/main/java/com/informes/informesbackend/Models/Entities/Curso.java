@@ -34,7 +34,6 @@ public class Curso {
     @NotBlank
     private String cicloLectivo;
 
-
     @OneToMany(mappedBy="curso", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JsonBackReference
     private Set<Alumno> alumnos = new HashSet();

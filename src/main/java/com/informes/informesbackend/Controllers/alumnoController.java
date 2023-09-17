@@ -205,7 +205,7 @@ public class alumnoController {
     }
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/uploadFile/{idCurso}")
-    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable Long idCurso) throws IOException {
+    public ResponseEntity<?> uploadFile( @RequestParam("file") MultipartFile file, @PathVariable Long idCurso) throws IOException {
        Optional<Curso>optionalCurso=cursoService.porId(idCurso);
         List<Alumno> alumnos = new ArrayList<>();
        InputStream inputStream= file.getInputStream();
@@ -213,6 +213,11 @@ public class alumnoController {
         settings.setHeaderExtractionEnabled(true);
         CsvParser parser= new CsvParser(settings);
         List<Record> parseAllRecords = parser.parseAllRecords(inputStream);
+
+        parseAllRecords.forEach(record -> {
+
+        });
+
         parseAllRecords.forEach(record -> {
             Alumno alumno=new Alumno();
             alumno.setDni(record.getString("dni_alumno"));
@@ -220,15 +225,20 @@ public class alumnoController {
             alumno.setApellido(record.getString("apellidos"));
             alumno.setEmail(record.getString("email"));
             alumno.setCurso(optionalCurso.get());
-            alumnos.add(alumno);
 
-            NuevoUsuario nuevoUsuario= new NuevoUsuario();
-            nuevoUsuario.setNombre(alumno.getNombreCompleto());
-            nuevoUsuario.setNombreUsuario(alumno.getDni());
-            nuevoUsuario.setPassword(alumno.getDni());
+            if(!service.listarporDni(record.getString("dni_alumno")).isPresent()){
+                alumnos.add(alumno);
+
+                NuevoUsuario nuevoUsuario= new NuevoUsuario();
+                nuevoUsuario.setNombre(alumno.getNombreCompleto());
+                nuevoUsuario.setNombreUsuario(alumno.getDni());
+                nuevoUsuario.setPassword(alumno.getDni());
 
 
-            guardarUsuarioService.crearUsuario(nuevoUsuario);
+                guardarUsuarioService.crearUsuario(nuevoUsuario);
+
+            }
+
 
         });
 
